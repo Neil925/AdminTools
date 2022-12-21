@@ -33,14 +33,13 @@ namespace AdminTools
 
         [PluginConfig] public Config Config;
 
-        [PluginPriority(LoadPriority.Highest)]
         [PluginEntryPoint(Name, Version, "Tools to better support staff", Author)]
         public void Start()
         {
             foreach (var translation in PlayerStatsSystem.DeathTranslations.TranslationsById)
                 Handlers.UniversalDamageTypeIDs.Add(translation.Value, translation.Key);
-
-            string path = Path.Combine(Paths.Configs, "AdminTools");
+            
+            string path = Path.Combine(Paths.LocalPlugins.Plugins, "Admin Tools");
             string overwatchFileName = Path.Combine(path, "AdminTools-Overwatch.txt");
             string hiddenTagFileName = Path.Combine(path, "AdminTools-HiddenTags.txt");
             
