@@ -23,7 +23,7 @@ namespace AdminTools.Commands.DropItem
             response = "This command is not currently available.";
             return false;
 
-            // if (!((CommandSender)sender).CheckPermission(PlayerPermissions.PlayersManagement))
+            // if (!((CommandSender)sender).CheckPermission(PlayerPermissions.GivingItems))
             // {
             //     response = "You do not have permission to use this command";
             //     return false;

@@ -11,9 +11,9 @@ namespace AdminTools.Commands.Tags
 
         public override string Command { get; } = "tags";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Hides staff tags in the server";
+        public override string Description { get; } = "Hides or shows staff tags in the server";
 
         public override void LoadGeneratedCommands() 
         {

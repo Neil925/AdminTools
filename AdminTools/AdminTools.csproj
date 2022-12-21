@@ -101,9 +101,7 @@
         <Compile Include="Commands\Dummy\Dummy.cs" />
         <Compile Include="Commands\Enums\Enums.cs" />
         <Compile Include="Commands\Explode\Explode.cs" />
-        <Compile Include="Commands\Ghost\Ghost.cs" />
         <Compile Include="Commands\Grenade\Grenade.cs" />
-        <Compile Include="Commands\HintBroadcast\HintBroadcast.cs" />
         <Compile Include="Commands\InstantKill\InstantKill.cs" />
         <Compile Include="Commands\Inventory\Drop.cs" />
         <Compile Include="Commands\Inventory\Inventory.cs" />
@@ -127,7 +125,6 @@
         <Compile Include="Commands\Tags\Hide.cs" />
         <Compile Include="Commands\Tags\Show.cs" />
         <Compile Include="Commands\Tags\Tags.cs" />
-        <Compile Include="Commands\TargetGhost\TargetGhost.cs" />
         <Compile Include="Commands\TeleportX\TeleportX.cs" />
         <Compile Include="Commands\Unmute\All.cs" />
         <Compile Include="Commands\Unmute\ICom.cs" />

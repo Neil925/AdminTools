@@ -16,7 +16,7 @@ namespace AdminTools.Commands.Dummy
 
         public override string Command { get; } = "dummy";
 
-        public override string[] Aliases { get; } = new string[] { "dum" };
+        public override string[] Aliases { get; } = { "dum" };
 
         public override string Description { get; } = "Spawns a dummy character on all users on a user";
 
@@ -24,7 +24,7 @@ namespace AdminTools.Commands.Dummy
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.WarheadEvents))
+            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.RespawnEvents))
             {
                 response = "You do not have permission to use this command";
                 return false;

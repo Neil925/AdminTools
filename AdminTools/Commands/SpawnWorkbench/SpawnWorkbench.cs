@@ -24,7 +24,7 @@ namespace AdminTools.Commands.SpawnWorkbench
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.WarheadEvents))
+            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.RespawnEvents))
             {
                 response = "You do not have permission to use this command";
                 return false;

@@ -21,7 +21,7 @@ namespace AdminTools.Commands.Scale
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.WarheadEvents))
+            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.Effects))
             {
                 response = "You do not have permission to use this command";
                 return false;

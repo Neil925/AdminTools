@@ -13,7 +13,7 @@ namespace AdminTools.Commands.Cleanup
 
         public override string[] Aliases { get; } = new string[] { };
 
-        public override string Description { get; } = "Cleans up items and ragdolls from the server";
+        public override string Description { get; } = "Clears up items and ragdolls from the server";
 
         public override void LoadGeneratedCommands() 
         {
