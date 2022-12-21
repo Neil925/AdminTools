@@ -1,7 +1,7 @@
 # AdminTools
 A port of EXILED's SCP:SL plugin made for the new offical Northwood API. Gives server owners more useful commands. 
 
-# Commands and Descriptions
+## Commands and Descriptions
 ```
 - adminbroadcast (a.k.a. abc)
     Sends a message to all currently online staff on the server
