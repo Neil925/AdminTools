@@ -1,9 +1,9 @@
 ﻿using CommandSystem;
 using NorthwoodLib.Pools;
+using PluginAPI.Core;
 using System;
 using System.Linq;
 using System.Text;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.PryGates
 {
@@ -13,11 +13,11 @@ namespace AdminTools.Commands.PryGates
     {
         public PryGates() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "prygate";
+        public override string Command => "prygate";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Gives the ability to pry gates to players, clear the ability from players, and shows who has the ability";
+        public override string Description => "Gives the ability to pry gates to players, clear the ability from players, and shows who has the ability";
 
         public override void LoadGeneratedCommands() { }
 
@@ -39,7 +39,7 @@ namespace AdminTools.Commands.PryGates
             }
 
             int id;
-            
+
             switch (arguments.At(0))
             {
                 case "clear":
@@ -70,12 +70,9 @@ namespace AdminTools.Commands.PryGates
                         StringBuilderPool.Shared.Return(playerLister);
                         return true;
                     }
-                    else
-                    {
-                        response = playerLister.ToString();
-                        StringBuilderPool.Shared.Return(playerLister);
-                        return true;
-                    }
+                    response = playerLister.ToString();
+                    StringBuilderPool.Shared.Return(playerLister);
+                    return true;
                 case "remove":
                     if (arguments.Count != 2)
                     {
@@ -108,8 +105,7 @@ namespace AdminTools.Commands.PryGates
 
                     foreach (Player ply in Player.GetPlayers())
                     {
-                        if (!Plugin.PryGateHubs.Contains(ply))
-                            Plugin.PryGateHubs.Add(ply);
+                        Plugin.PryGateHubs.Add(ply);
                     }
 
                     response = "The ability to pry gates open is on for all players now";

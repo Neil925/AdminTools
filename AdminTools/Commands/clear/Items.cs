@@ -1,8 +1,9 @@
 ﻿using CommandSystem;
-using System;
 using InventorySystem.Items.Pickups;
+using System;
+using Object = UnityEngine.Object;
 
-namespace AdminTools.Commands.Cleanup
+namespace AdminTools.Commands.clear
 {
     class Items : ICommand
     {
@@ -27,7 +28,7 @@ namespace AdminTools.Commands.Cleanup
             }
 
             foreach (ItemPickupBase item in Handlers.GetPickups())
-                UnityEngine.Object.Destroy(item);
+                Object.Destroy(item);
 
             response = "Items have been cleaned up now";
             return true;

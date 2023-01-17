@@ -1,7 +1,5 @@
 ﻿using CommandSystem;
-using Mirror;
 using System;
-using UnityEngine;
 
 namespace AdminTools.Commands.DropSize
 {
@@ -11,11 +9,11 @@ namespace AdminTools.Commands.DropSize
     {
         public DropSize() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "dropsize";
+        public override string Command => "dropsize";
 
-        public override string[] Aliases { get; } = new string[] { "drops" };
+        public override string[] Aliases { get; } = { "drops" };
 
-        public override string Description { get; } = "Drops a selected amount of a selected item on a user or all users";
+        public override string Description => "Drops a selected amount of a selected item on a user or all users";
 
         public override void LoadGeneratedCommands() { }
 

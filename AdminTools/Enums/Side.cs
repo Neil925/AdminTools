@@ -1,10 +1,11 @@
-namespace AdminTools.Enums;
-
-public enum Side
+namespace AdminTools.Enums
 {
-    Scp,
-    Mtf,
-    ChaosInsurgency,
-    Tutorial,
-    None,
+    public enum Side
+    {
+        Scp,
+        Mtf,
+        ChaosInsurgency,
+        Tutorial,
+        None
+    }
 }

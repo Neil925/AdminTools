@@ -1,9 +1,10 @@
 ﻿using CommandSystem;
 using NorthwoodLib.Pools;
+using PluginAPI.Core;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using PluginAPI.Core;
 using UnityEngine;
 
 namespace AdminTools.Commands.Position
@@ -14,11 +15,11 @@ namespace AdminTools.Commands.Position
     {
         public Position() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "position";
+        public override string Command => "position";
 
-        public override string[] Aliases { get; } = new string[] { "pos" };
+        public override string[] Aliases { get; } = { "pos" };
 
-        public override string Description { get; } = "Modifies or retrieves the position of a user or all users";
+        public override string Description => "Modifies or retrieves the position of a user or all users";
 
         public override void LoadGeneratedCommands() { }
 
@@ -104,7 +105,7 @@ namespace AdminTools.Commands.Position
                                 positionBuilder.Append(" ");
                                 positionBuilder.Append(ply.Position.y);
                                 positionBuilder.Append(" ");
-                                positionBuilder.AppendLine(ply.Position.z.ToString());
+                                positionBuilder.AppendLine(ply.Position.z.ToString(CultureInfo.InvariantCulture));
                             }
                             string message = positionBuilder.ToString();
                             StringBuilderPool.Shared.Return(positionBuilder);

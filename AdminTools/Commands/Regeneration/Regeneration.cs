@@ -1,9 +1,11 @@
-﻿using CommandSystem;
+﻿using AdminTools.Components;
+using CommandSystem;
 using NorthwoodLib.Pools;
+using PluginAPI.Core;
 using System;
 using System.Linq;
 using System.Text;
-using PluginAPI.Core;
+using Object = UnityEngine.Object;
 
 namespace AdminTools.Commands.Regeneration
 {
@@ -13,11 +15,11 @@ namespace AdminTools.Commands.Regeneration
     {
         public Regeneration() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "reg";
+        public override string Command => "reg";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Manages regeneration properties for users";
+        public override string Description => "Manages regeneration properties for users";
 
         public override void LoadGeneratedCommands() { }
 
@@ -50,7 +52,7 @@ namespace AdminTools.Commands.Regeneration
 
                     foreach (Player ply in Plugin.RgnHubs.Keys)
                         if (ply.ReferenceHub.TryGetComponent(out RegenerationComponent rgCom))
-                            UnityEngine.Object.Destroy(rgCom);
+                            Object.Destroy(rgCom);
 
                     response = "Regeneration has been removed from everyone";
                     return true;
@@ -118,7 +120,7 @@ namespace AdminTools.Commands.Regeneration
                         return false;
                     }
 
-                    foreach (var ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.TryGetComponent(out RegenerationComponent _)))
+                    foreach (Player ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.TryGetComponent(out RegenerationComponent _)))
                         ply.ReferenceHub.gameObject.AddComponent<RegenerationComponent>();
 
                     response = "Everyone on the server can regenerate health now";
@@ -145,7 +147,7 @@ namespace AdminTools.Commands.Regeneration
                     }
                     else
                     {
-                        UnityEngine.Object.Destroy(rgnComponent);
+                        Object.Destroy(rgnComponent);
                         response = $"Regeneration is off for {pl.Nickname}";
                     }
                     return true;

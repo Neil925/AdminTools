@@ -1,5 +1,5 @@
-﻿using System;
-using CommandSystem;
+﻿using CommandSystem;
+using System;
 
 namespace AdminTools.Commands.Tags
 {
@@ -9,13 +9,13 @@ namespace AdminTools.Commands.Tags
     {
         public Tags() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "tags";
+        public override string Command => "tags";
 
         public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Hides or shows staff tags in the server";
+        public override string Description => "Hides or shows staff tags in the server";
 
-        public override void LoadGeneratedCommands() 
+        public override void LoadGeneratedCommands()
         {
             RegisterCommand(new Hide());
             RegisterCommand(new Show());

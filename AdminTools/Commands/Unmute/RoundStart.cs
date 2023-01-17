@@ -1,16 +1,16 @@
 ﻿using CommandSystem;
-using System;
 using PluginAPI.Core;
+using System;
 
 namespace AdminTools.Commands.Unmute
 {
     public class RoundStart : ICommand
     {
-        public string Command { get; } = "roundstart";
+        public string Command => "roundstart";
 
-        public string[] Aliases { get; } = new string[] { "rs" };
+        public string[] Aliases { get; } = { "rs" };
 
-        public string Description { get; } = "Unmutes everyone from speaking until the round starts.";
+        public string Description => "Unmutes everyone from speaking until the round starts.";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {

@@ -1,17 +1,17 @@
-﻿using System;
-using System.Linq;
-using CommandSystem;
+﻿using CommandSystem;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.Tags
 {
     public class Show : ICommand
     {
-        public string Command { get; } = "show";
+        public string Command => "show";
 
-        public string[] Aliases { get; } = new string[] { };
+        public string[] Aliases { get; } = { };
 
-        public string Description { get; } = "Shows staff tags on the server";
+        public string Description => "Shows staff tags on the server";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -27,7 +27,7 @@ namespace AdminTools.Commands.Tags
                 return false;
             }
 
-            foreach (var player in Player.GetPlayers().Where(player => player.ReferenceHub.serverRoles.RemoteAdmin && !player.ReferenceHub.serverRoles.RaEverywhere && player.IsBadgeHidden()))
+            foreach (Player player in Player.GetPlayers().Where(player => player.ReferenceHub.serverRoles.RemoteAdmin && !player.ReferenceHub.serverRoles.RaEverywhere && player.IsBadgeHidden()))
                 player.SetBadgeHidden(false);
 
             response = "All staff tags are now visible";

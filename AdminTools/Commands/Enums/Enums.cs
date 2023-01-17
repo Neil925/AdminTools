@@ -11,11 +11,11 @@ namespace AdminTools.Commands.Enums
     {
         public Enums() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "enums";
+        public override string Command => "enums";
 
-        public override string[] Aliases { get; } = new string[] { "enum" };
+        public override string[] Aliases { get; } = { "enum" };
 
-        public override string Description { get; } = "Lists all enums AdminTools uses";
+        public override string Description => "Lists all enums AdminTools uses";
 
         public override void LoadGeneratedCommands() { }
 

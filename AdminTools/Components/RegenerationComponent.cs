@@ -1,15 +1,14 @@
-﻿using System;
-using UnityEngine;
-using MEC;
-using System.Collections.Generic;
+﻿using MEC;
 using PluginAPI.Core;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace AdminTools
+namespace AdminTools.Components
 {
     public class RegenerationComponent : MonoBehaviour
     {
         private Player _player;
-        CoroutineHandle _handle;
+        private CoroutineHandle _handle;
         public void Awake()
         {
             _player = Player.Get(gameObject);
@@ -23,7 +22,7 @@ namespace AdminTools
             Plugin.RgnHubs.Remove(_player);
         }
 
-        public IEnumerator<float> HealHealth(Player ply)
+        public static IEnumerator<float> HealHealth(Player ply)
         {
             while (true)
             {

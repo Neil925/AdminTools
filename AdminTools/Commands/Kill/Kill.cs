@@ -1,8 +1,8 @@
 ﻿using CommandSystem;
-using System;
-using System.Linq;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.Kill
 {
@@ -12,11 +12,11 @@ namespace AdminTools.Commands.Kill
     {
         public Kill() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "atkill";
+        public override string Command => "atkill";
 
         public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Kills everyone or a user instantly";
+        public override string Description => "Kills everyone or a user instantly";
 
         public override void LoadGeneratedCommands() { }
 
@@ -38,7 +38,7 @@ namespace AdminTools.Commands.Kill
             {
                 case "*":
                 case "all":
-                    foreach (var ply in Player.GetPlayers().Where(ply => ply.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
+                    foreach (Player ply in Player.GetPlayers().Where(ply => ply.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
                     {
                         ply.Kill("Killed by admin.");
                     }
@@ -53,7 +53,7 @@ namespace AdminTools.Commands.Kill
                         return false;
                     }
 
-                    if (pl.Role == RoleTypeId.Spectator || pl.Role == RoleTypeId.None)
+                    if (pl.Role is RoleTypeId.Spectator or RoleTypeId.None)
                     {
                         response = $"Player {pl.Nickname} is not a valid class to kill";
                         return false;

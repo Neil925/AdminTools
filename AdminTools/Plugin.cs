@@ -1,11 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+using AdminTools.Components;
+using PlayerStatsSystem;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
-using PluginAPI.Enums;
+using PluginAPI.Events;
 using PluginAPI.Helpers;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using Random = System.Random;
 
 namespace AdminTools
 {
@@ -17,7 +19,7 @@ namespace AdminTools
 
         public EventHandlers EventHandlers;
 
-        public static System.Random NumGen = new();
+        public static Random NumGen = new();
         public static List<Jailed> JailedPlayers = new();
         public static Dictionary<Player, InstantKillComponent> IkHubs = new();
         public static Dictionary<Player, RegenerationComponent> RgnHubs = new();
@@ -36,26 +38,30 @@ namespace AdminTools
         [PluginEntryPoint(Name, Version, "Tools to better support staff", Author)]
         public void Start()
         {
-            foreach (var translation in PlayerStatsSystem.DeathTranslations.TranslationsById)
+            foreach (KeyValuePair<byte, DeathTranslation> translation in DeathTranslations.TranslationsById)
                 Handlers.UniversalDamageTypeIDs.Add(translation.Value, translation.Key);
-            
+
             string path = Path.Combine(Paths.LocalPlugins.Plugins, "Admin Tools");
             string overwatchFileName = Path.Combine(path, "AdminTools-Overwatch.txt");
             string hiddenTagFileName = Path.Combine(path, "AdminTools-HiddenTags.txt");
-            
+
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            
+
             if (!File.Exists(overwatchFileName))
                 File.Create(overwatchFileName).Close();
-            
+
             if (!File.Exists(hiddenTagFileName))
                 File.Create(hiddenTagFileName).Close();
-            
+
             OverwatchFilePath = overwatchFileName;
             HiddenTagsFilePath = hiddenTagFileName;
-            
+
             EventHandlers = new EventHandlers(this);
+            EventManager.RegisterEvents(this, EventHandlers);
         }
+        
+        [PluginUnload]
+        public void Stop() => EventManager.UnregisterEvents(this, EventHandlers);
     }
 }

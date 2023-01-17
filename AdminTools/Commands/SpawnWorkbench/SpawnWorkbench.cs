@@ -1,11 +1,12 @@
 ﻿using CommandSystem;
+using PlayerRoles;
+using PluginAPI.Core;
 using RemoteAdmin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PlayerRoles;
-using PluginAPI.Core;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AdminTools.Commands.SpawnWorkbench
 {
@@ -14,11 +15,11 @@ namespace AdminTools.Commands.SpawnWorkbench
     {
         public SpawnWorkbench() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "bench";
+        public override string Command => "bench";
 
         public override string[] Aliases { get; } = { "sw", "wb", "workbench" };
 
-        public override string Description { get; } = "Spawns a workbench on all users or a user";
+        public override string Description => "Spawns a workbench on all users or a user";
 
         public override void LoadGeneratedCommands() { }
 
@@ -30,7 +31,7 @@ namespace AdminTools.Commands.SpawnWorkbench
                 return false;
             }
 
-            if (!(sender is PlayerCommandSender plysend))
+            if (sender is not PlayerCommandSender plysend)
             {
                 response = "You must be in-game to run this command!";
                 return false;
@@ -48,7 +49,7 @@ namespace AdminTools.Commands.SpawnWorkbench
             }
 
             int id;
-            
+
             switch (arguments.At(0))
             {
                 case "clear":
@@ -106,7 +107,7 @@ namespace AdminTools.Commands.SpawnWorkbench
 
                     for (int i = min; i <= max; i++)
                     {
-                        UnityEngine.Object.Destroy(objs.ElementAt(i));
+                        Object.Destroy(objs.ElementAt(i));
                         objs[i] = null;
                     }
                     objs.RemoveAll(r => r == null);
@@ -123,12 +124,12 @@ namespace AdminTools.Commands.SpawnWorkbench
                     foreach (KeyValuePair<Player, List<GameObject>> bch in Plugin.BchHubs)
                     {
                         foreach (GameObject bench in bch.Value)
-                            UnityEngine.Object.Destroy(bench);
+                            Object.Destroy(bench);
                         bch.Value.Clear();
                     }
 
                     Plugin.BchHubs.Clear();
-                    response = $"All spawned workbenches have now been removed";
+                    response = "All spawned workbenches have now been removed";
                     return true;
                 case "count":
                     if (arguments.Count != 2)
@@ -203,9 +204,9 @@ namespace AdminTools.Commands.SpawnWorkbench
                         response = $"Player not found: {arguments.At(0)}";
                         return false;
                     }
-                    else if (pl.Role == RoleTypeId.Spectator || pl.Role == RoleTypeId.None)
+                    if (pl.Role is RoleTypeId.Spectator or RoleTypeId.None)
                     {
-                        response = $"This player is not a valid class to spawn a workbench on";
+                        response = "This player is not a valid class to spawn a workbench on";
                         return false;
                     }
 

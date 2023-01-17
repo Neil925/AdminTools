@@ -1,17 +1,17 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Unmute
 {
     public class All : ICommand
     {
-        public string Command { get; } = "all";
+        public string Command => "all";
 
-        public string[] Aliases { get; } = new string[] { "*" };
+        public string[] Aliases { get; } = { "*" };
 
-        public string Description { get; } = "Removes all mutes from everyone in the server";
+        public string Description => "Removes all mutes from everyone in the server";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -27,7 +27,7 @@ namespace AdminTools.Commands.Unmute
                 return false;
             }
 
-            foreach (var ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.serverRoles.RemoteAdmin))
+            foreach (Player ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.serverRoles.RemoteAdmin))
             {
                 ply.IntercomUnmute(true);
                 ply.Unmute(true);

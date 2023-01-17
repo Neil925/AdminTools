@@ -1,11 +1,12 @@
 ﻿using CommandSystem;
+using PlayerRoles;
+using PluginAPI.Core;
 using RemoteAdmin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PlayerRoles;
-using PluginAPI.Core;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AdminTools.Commands.Dummy
 {
@@ -14,11 +15,11 @@ namespace AdminTools.Commands.Dummy
     {
         public Dummy() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "dummy";
+        public override string Command => "dummy";
 
         public override string[] Aliases { get; } = { "dum" };
 
-        public override string Description { get; } = "Spawns a dummy character on all users on a user";
+        public override string Description => "Spawns a dummy character on all users on a user";
 
         public override void LoadGeneratedCommands() { }
 
@@ -30,7 +31,7 @@ namespace AdminTools.Commands.Dummy
                 return false;
             }
 
-            if(sender is not PlayerCommandSender plysend)
+            if (sender is not PlayerCommandSender plysend)
             {
                 response = "You must be in-game to run this command!";
                 return false;
@@ -47,7 +48,7 @@ namespace AdminTools.Commands.Dummy
             }
 
             int id;
-            
+
             switch (arguments.At(0))
             {
                 case "clear":
@@ -105,7 +106,7 @@ namespace AdminTools.Commands.Dummy
 
                     for (int i = min; i <= max; i++)
                     {
-                        UnityEngine.Object.Destroy(objs.ElementAt(i));
+                        Object.Destroy(objs.ElementAt(i));
                         objs[i] = null;
                     }
                     objs.RemoveAll(r => r == null);
@@ -122,12 +123,12 @@ namespace AdminTools.Commands.Dummy
                     foreach (KeyValuePair<Player, List<GameObject>> dummy in Plugin.DumHubs)
                     {
                         foreach (GameObject dum in dummy.Value)
-                            UnityEngine.Object.Destroy(dum);
+                            Object.Destroy(dum);
                         dummy.Value.Clear();
                     }
 
                     Plugin.DumHubs.Clear();
-                    response = $"All spawned dummies have now been removed";
+                    response = "All spawned dummies have now been removed";
                     return true;
                 case "count":
                     if (arguments.Count != 2)
@@ -183,7 +184,7 @@ namespace AdminTools.Commands.Dummy
                         return false;
                     }
                     int index = 0;
-                    foreach (var p in Player.GetPlayers().Where(p => p.Role != RoleTypeId.Spectator && p.Role != RoleTypeId.None))
+                    foreach (Player p in Player.GetPlayers().Where(p => p.Role != RoleTypeId.Spectator && p.Role != RoleTypeId.None))
                     {
                         EventHandlers.SpawnDummyModel(player, p.Position, p.GameObject.transform.localRotation, role, xval, yval, zval, out int dIndex);
                         index = dIndex;
@@ -205,9 +206,9 @@ namespace AdminTools.Commands.Dummy
                         return false;
                     }
 
-                    if (pl.Role == RoleTypeId.Spectator || pl.Role == RoleTypeId.None)
+                    if (pl.Role is RoleTypeId.Spectator or RoleTypeId.None)
                     {
-                        response = $"This player is not a valid class to spawn a dummy on";
+                        response = "This player is not a valid class to spawn a dummy on";
                         return false;
                     }
 

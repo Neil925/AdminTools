@@ -9,11 +9,11 @@ namespace AdminTools.Commands.Unmute
     {
         public Unmute() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "punmute";
+        public override string Command => "punmute";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Unmutes everyone from speaking or by intercom in the server";
+        public override string Description => "Unmutes everyone from speaking or by intercom in the server";
 
         public override void LoadGeneratedCommands()
         {

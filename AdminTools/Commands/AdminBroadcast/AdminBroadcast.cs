@@ -1,8 +1,8 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using RemoteAdmin;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.AdminBroadcast
 {
@@ -22,7 +22,7 @@ namespace AdminTools.Commands.AdminBroadcast
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!CommandProcessor.CheckPermissions(((CommandSender)sender), "broadcast", PlayerPermissions.Broadcasting, "AdminTools", false))
+            if (!CommandProcessor.CheckPermissions((CommandSender)sender, "broadcast", PlayerPermissions.Broadcasting, "AdminTools", false))
             {
                 response = "You do not have permission to use this command";
                 return false;
@@ -40,11 +40,11 @@ namespace AdminTools.Commands.AdminBroadcast
                 return false;
             }
 
-            foreach (var pl in Player.GetPlayers().Where(pl => pl.ReferenceHub.serverRoles != null && pl.ReferenceHub.serverRoles.RemoteAdmin))
+            foreach (Player pl in Player.GetPlayers().Where(pl => pl.ReferenceHub.serverRoles != null && pl.ReferenceHub.serverRoles.RemoteAdmin))
                 pl.SendBroadcast(EventHandlers.FormatArguments(arguments, 1) + $" ~{((CommandSender)sender).Nickname}",
                     t, Broadcast.BroadcastFlags.AdminChat);
 
-            response = $"Message sent to all currently online staff";
+            response = "Message sent to all currently online staff";
             return true;
         }
     }

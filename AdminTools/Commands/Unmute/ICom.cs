@@ -1,16 +1,16 @@
 ﻿using CommandSystem;
-using System;
 using PluginAPI.Core;
+using System;
 
 namespace AdminTools.Commands.Unmute
 {
     public class Com : ICommand
     {
-        public string Command { get; } = "icom";
+        public string Command => "icom";
 
-        public string[] Aliases { get; } = new string[] { };
+        public string[] Aliases { get; } = { };
 
-        public string Description { get; } = "Removes intercom mutes everyone in the server";
+        public string Description => "Removes intercom mutes everyone in the server";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {

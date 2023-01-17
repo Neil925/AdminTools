@@ -1,7 +1,7 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Scale
 {
@@ -11,11 +11,11 @@ namespace AdminTools.Commands.Scale
     {
         public Scale() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "scale";
+        public override string Command => "scale";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Scales all users or a user by a specified value";
+        public override string Description => "Scales all users or a user by a specified value";
 
         public override void LoadGeneratedCommands() { }
 
@@ -45,7 +45,7 @@ namespace AdminTools.Commands.Scale
                     foreach (Player plyr in Player.GetPlayers())
                         EventHandlers.SetPlayerScale(plyr.GameObject, 1);
 
-                    response = $"Everyone's scale has been reset";
+                    response = "Everyone's scale has been reset";
                     return true;
                 case "*":
                 case "all":

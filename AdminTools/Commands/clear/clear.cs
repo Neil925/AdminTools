@@ -1,7 +1,7 @@
 ﻿using CommandSystem;
 using System;
 
-namespace AdminTools.Commands.Cleanup
+namespace AdminTools.Commands.clear
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
@@ -9,13 +9,13 @@ namespace AdminTools.Commands.Cleanup
     {
         public Clear() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "clear";
+        public override string Command => "clear";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Clears up items and ragdolls from the server";
+        public override string Description => "Clears up items and ragdolls from the server";
 
-        public override void LoadGeneratedCommands() 
+        public override void LoadGeneratedCommands()
         {
             RegisterCommand(new Items());
             RegisterCommand(new Ragdolls());

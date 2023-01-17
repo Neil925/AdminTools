@@ -1,16 +1,17 @@
 ﻿using CommandSystem;
 using Mirror;
 using System;
+using Object = UnityEngine.Object;
 
-namespace AdminTools.Commands.Cleanup
+namespace AdminTools.Commands.clear
 {
     class Ragdolls : ICommand
     {
-        public string Command { get; } = "ragdolls";
+        public string Command => "ragdolls";
 
-        public string[] Aliases { get; } = new string[] { };
+        public string[] Aliases { get; } = { };
 
-        public string Description { get; } = "Cleans up ragdolls on the server";
+        public string Description => "Cleans up ragdolls on the server";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -26,7 +27,7 @@ namespace AdminTools.Commands.Cleanup
                 return false;
             }
 
-            foreach (BasicRagdoll doll in UnityEngine.Object.FindObjectsOfType<BasicRagdoll>())
+            foreach (BasicRagdoll doll in Object.FindObjectsOfType<BasicRagdoll>())
                 NetworkServer.Destroy(doll.gameObject);
 
             response = "Ragdolls have been cleaned up now";

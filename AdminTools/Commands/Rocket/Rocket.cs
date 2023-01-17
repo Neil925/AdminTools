@@ -1,9 +1,9 @@
 ﻿using CommandSystem;
 using MEC;
-using System;
-using System.Linq;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.Rocket
 {
@@ -13,11 +13,11 @@ namespace AdminTools.Commands.Rocket
     {
         public Rocket() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "rocket";
+        public override string Command => "rocket";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Sends players high in the sky and explodes them";
+        public override string Description => "Sends players high in the sky and explodes them";
 
         public override void LoadGeneratedCommands() { }
 
@@ -58,7 +58,7 @@ namespace AdminTools.Commands.Rocket
                         response = $"Player not found: {arguments.At(0)}";
                         return false;
                     }
-                    else if (pl.Role == RoleTypeId.Spectator || pl.Role == RoleTypeId.None)
+                    if (pl.Role is RoleTypeId.Spectator or RoleTypeId.None)
                     {
                         response = $"Player {pl.Nickname} is not a valid class to rocket";
                         return false;

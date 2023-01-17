@@ -1,8 +1,8 @@
 ﻿using CommandSystem;
 using MEC;
+using PluginAPI.Core;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Jail
 {
@@ -12,11 +12,11 @@ namespace AdminTools.Commands.Jail
     {
         public Jail() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "jail";
+        public override string Command => "jail";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Jails or unjails a user";
+        public override string Description => "Jails or unjails a user";
 
         public override void LoadGeneratedCommands() { }
 
@@ -33,7 +33,7 @@ namespace AdminTools.Commands.Jail
                 response = "Usage: jail (player id / name)";
                 return false;
             }
-            
+
             Player ply = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
 
             if (ply == null)

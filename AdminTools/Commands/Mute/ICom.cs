@@ -1,17 +1,17 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Mute
 {
     public class Com : ICommand
     {
-        public string Command { get; } = "icom";
+        public string Command => "icom";
 
-        public string[] Aliases { get; } = new string[] { };
+        public string[] Aliases { get; } = { };
 
-        public string Description { get; } = "Intercom mutes everyone in the server";
+        public string Description => "Intercom mutes everyone in the server";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -27,7 +27,7 @@ namespace AdminTools.Commands.Mute
                 return false;
             }
 
-            foreach (var player in Player.GetPlayers().Where(player => !player.ReferenceHub.serverRoles.RemoteAdmin && player.IsIntercomMuted))
+            foreach (Player player in Player.GetPlayers().Where(player => !player.ReferenceHub.serverRoles.RemoteAdmin && player.IsIntercomMuted))
                 player.IntercomUnmute(true);
 
             response = "Everyone from the server who is not a staff has been intercom muted";

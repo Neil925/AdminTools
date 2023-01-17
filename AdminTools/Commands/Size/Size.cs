@@ -1,8 +1,8 @@
 ﻿using CommandSystem;
-using System;
-using System.Linq;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.Size
 {
@@ -12,11 +12,11 @@ namespace AdminTools.Commands.Size
     {
         public Size() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "size";
+        public override string Command => "size";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Sets the size of all users or a user";
+        public override string Description => "Sets the size of all users or a user";
 
         public override void LoadGeneratedCommands() { }
 
@@ -38,12 +38,12 @@ namespace AdminTools.Commands.Size
             switch (arguments.At(0))
             {
                 case "reset":
-                    foreach (var ply in Player.GetPlayers().Where(ply => ply.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
+                    foreach (Player ply in Player.GetPlayers().Where(ply => ply.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
                     {
                         EventHandlers.SetPlayerScale(ply.GameObject, 1, 1, 1);
                     }
 
-                    response = $"Everyone's size has been reset";
+                    response = "Everyone's size has been reset";
                     return true;
                 case "*":
                 case "all":
@@ -71,7 +71,7 @@ namespace AdminTools.Commands.Size
                         return false;
                     }
 
-                    foreach (var ply in Player.GetPlayers().Where(ply => ply.Role is not (RoleTypeId.Spectator or RoleTypeId.None)))
+                    foreach (Player ply in Player.GetPlayers().Where(ply => ply.Role is not (RoleTypeId.Spectator or RoleTypeId.None)))
                     {
                         EventHandlers.SetPlayerScale(ply.GameObject, xval, yval, zval);
                     }

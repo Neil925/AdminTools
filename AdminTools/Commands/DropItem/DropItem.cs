@@ -1,6 +1,5 @@
 ﻿using CommandSystem;
 using System;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.DropItem
 {
@@ -10,11 +9,11 @@ namespace AdminTools.Commands.DropItem
     {
         public DropItem() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "dropitem";
+        public override string Command => "dropitem";
 
-        public override string[] Aliases { get; } = new string[] { "drop", "dropi" };
+        public override string[] Aliases { get; } = { "drop", "dropi" };
 
-        public override string Description { get; } = "Drops a specified amount of a specified item on either all users or a user";
+        public override string Description => "Drops a specified amount of a specified item on either all users or a user";
 
         public override void LoadGeneratedCommands() { }
 

@@ -1,16 +1,12 @@
 ﻿using CommandSystem;
 using MEC;
-using System;
-using System.Linq;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.SpawnRagdoll
 {
-    using System.Collections.Generic;
-    using Mirror;
-    using PlayerStatsSystem;
-    using UnityEngine;
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
@@ -18,11 +14,11 @@ namespace AdminTools.Commands.SpawnRagdoll
     {
         public SpawnRagdoll() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "spawnragdoll";
+        public override string Command => "spawnragdoll";
 
-        public override string[] Aliases { get; } = new string[] { "ragdoll", "rd", "rag", "doll" };
+        public override string[] Aliases { get; } = { "ragdoll", "rd", "rag", "doll" };
 
-        public override string Description { get; } = "Spawns a specified number of ragdolls on a user";
+        public override string Description => "Spawns a specified number of ragdolls on a user";
 
         public override void LoadGeneratedCommands() { }
 
@@ -56,7 +52,7 @@ namespace AdminTools.Commands.SpawnRagdoll
             {
                 case "*":
                 case "all":
-                    foreach (var player in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
+                    foreach (Player player in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
                     {
                         Timing.RunCoroutine(EventHandlers.SpawnBodies(player, type, amount));
                     }

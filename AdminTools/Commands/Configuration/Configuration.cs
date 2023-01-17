@@ -9,16 +9,13 @@ namespace AdminTools.Commands.Configuration
     {
         public Configuration() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "cfig";
+        public override string Command => "cfig";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Manages reloading permissions and configs";
+        public override string Description => "Manages reloading permissions and configs";
 
-        public override void LoadGeneratedCommands() 
-        {
-            RegisterCommand(new Reload());
-        }
+        public override void LoadGeneratedCommands() => RegisterCommand(new Reload());
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {

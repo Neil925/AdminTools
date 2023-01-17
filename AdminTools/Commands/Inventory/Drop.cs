@@ -1,7 +1,7 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Inventory
 {
@@ -11,11 +11,11 @@ namespace AdminTools.Commands.Inventory
     {
         public Drop() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "drop";
+        public override string Command => "drop";
 
-        public override string[] Aliases { get; } = new string[] { };
+        public override string[] Aliases { get; } = { };
 
-        public override string Description { get; } = "Drops the items in a players inventory";
+        public override string Description => "Drops the items in a players inventory";
 
         public override void LoadGeneratedCommands() { }
 

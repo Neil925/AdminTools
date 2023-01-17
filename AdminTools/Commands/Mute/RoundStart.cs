@@ -1,17 +1,17 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Mute
 {
     public class RoundStart : ICommand
     {
-        public string Command { get; } = "roundstart";
+        public string Command => "roundstart";
 
-        public string[] Aliases { get; } = new string[] { "rs" };
+        public string[] Aliases { get; } = { "rs" };
 
-        public string Description { get; } = "Mutes everyone from speaking until the round starts.";
+        public string Description => "Mutes everyone from speaking until the round starts.";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
@@ -33,7 +33,7 @@ namespace AdminTools.Commands.Mute
                 return false;
             }
 
-            foreach (var player in Player.GetPlayers().Where(player => !player.IsMuted && !player.ReferenceHub.serverRoles.RemoteAdmin))
+            foreach (Player player in Player.GetPlayers().Where(player => !player.IsMuted && !player.ReferenceHub.serverRoles.RemoteAdmin))
             {
                 player.Mute();
                 Plugin.RoundStartMutes.Add(player);

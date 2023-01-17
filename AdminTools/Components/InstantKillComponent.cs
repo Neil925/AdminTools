@@ -5,7 +5,7 @@ using PluginAPI.Enums;
 using PluginAPI.Events;
 using UnityEngine;
 
-namespace AdminTools
+namespace AdminTools.Components
 {
     public class InstantKillComponent : MonoBehaviour
     {

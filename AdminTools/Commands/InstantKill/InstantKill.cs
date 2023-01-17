@@ -1,9 +1,11 @@
-﻿using CommandSystem;
+﻿using AdminTools.Components;
+using CommandSystem;
 using NorthwoodLib.Pools;
+using PluginAPI.Core;
 using System;
 using System.Linq;
 using System.Text;
-using PluginAPI.Core;
+using Object = UnityEngine.Object;
 
 namespace AdminTools.Commands.InstantKill
 {
@@ -13,11 +15,11 @@ namespace AdminTools.Commands.InstantKill
     {
         public InstantKill() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "instakill";
+        public override string Command => "instakill";
 
-        public override string[] Aliases { get; } = new string[] { "ik" };
+        public override string[] Aliases { get; } = { "ik" };
 
-        public override string Description { get; } = "Manage instant kill properties for users";
+        public override string Description => "Manage instant kill properties for users";
 
         public override void LoadGeneratedCommands() { }
 
@@ -39,7 +41,7 @@ namespace AdminTools.Commands.InstantKill
             }
 
             int id;
-            
+
             switch (arguments.At(0))
             {
                 case "clear":
@@ -51,7 +53,7 @@ namespace AdminTools.Commands.InstantKill
 
                     foreach (Player ply in Plugin.IkHubs.Keys)
                         if (ply.ReferenceHub.TryGetComponent(out InstantKillComponent ikCom))
-                            UnityEngine.Object.Destroy(ikCom);
+                            Object.Destroy(ikCom);
 
                     response = "Instant killing has been removed from everyone";
                     return true;
@@ -96,7 +98,7 @@ namespace AdminTools.Commands.InstantKill
                     if (pl.ReferenceHub.TryGetComponent(out InstantKillComponent ikComponent))
                     {
                         Plugin.IkHubs.Remove(pl);
-                        UnityEngine.Object.Destroy(ikComponent);
+                        Object.Destroy(ikComponent);
                         response = $"Instant killing is off for {pl.Nickname} now";
                     }
                     else
@@ -110,7 +112,7 @@ namespace AdminTools.Commands.InstantKill
                         return false;
                     }
 
-                    foreach (var ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.TryGetComponent(out InstantKillComponent _)))
+                    foreach (Player ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.TryGetComponent(out InstantKillComponent _)))
                         ply.ReferenceHub.gameObject.AddComponent<InstantKillComponent>();
 
                     response = "Everyone on the server can instantly kill other users now";
@@ -136,7 +138,7 @@ namespace AdminTools.Commands.InstantKill
                     }
                     else
                     {
-                        UnityEngine.Object.Destroy(ikComp);
+                        Object.Destroy(ikComp);
                         response = $"Instant killing is off for {plyr.Nickname}";
                     }
                     return true;

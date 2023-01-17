@@ -1,8 +1,9 @@
 ﻿using CommandSystem;
-using System;
-using System.Linq;
+using InventorySystem.Items.ThrowableProjectiles;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.Explode
 {
@@ -13,11 +14,11 @@ namespace AdminTools.Commands.Explode
     {
         public Explode() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "expl";
+        public override string Command => "expl";
 
-        public override string[] Aliases { get; } = new string[] { "boom" };
+        public override string[] Aliases { get; } = { "boom" };
 
-        public override string Description { get; } = "Explodes a specified user or everyone instantly";
+        public override string Description => "Explodes a specified user or everyone instantly";
 
         public override void LoadGeneratedCommands() { }
 
@@ -45,10 +46,10 @@ namespace AdminTools.Commands.Explode
                         return false;
                     }
 
-                    foreach (var ply in Player.GetPlayers().Where(ply => ply.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
+                    foreach (Player ply in Player.GetPlayers().Where(ply => ply.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
                     {
                         ply.Kill("Exploded by admin.");
-                        var grenade = Handlers.CreateThrowable(ItemType.GrenadeHE);
+                        ThrowableItem grenade = Handlers.CreateThrowable(ItemType.GrenadeHE);
                         grenade.SpawnActive(ply.Position, .5f, ply);
                     }
                     response = "Everyone exploded, Hubert cannot believe you have done this";
@@ -67,15 +68,15 @@ namespace AdminTools.Commands.Explode
                         return false;
                     }
 
-                    if (pl.Role == RoleTypeId.Spectator || pl.Role == RoleTypeId.None)
+                    if (pl.Role is RoleTypeId.Spectator or RoleTypeId.None)
                     {
                         response = $"Player \"{pl.Nickname}\" is not a valid class to explode";
                         return false;
                     }
 
                     pl.Kill("Exploded by admin.");
-                    var gr = Handlers.CreateThrowable(ItemType.GrenadeHE);
-                    gr.SpawnActive(pl.Position,.5f, pl);
+                    ThrowableItem gr = Handlers.CreateThrowable(ItemType.GrenadeHE);
+                    gr.SpawnActive(pl.Position, .5f, pl);
                     response = $"Player \"{pl.Nickname}\" game ended (exploded)";
                     return true;
             }

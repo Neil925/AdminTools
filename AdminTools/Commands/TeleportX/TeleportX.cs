@@ -1,8 +1,8 @@
 ﻿using CommandSystem;
-using System;
-using System.Linq;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.TeleportX
 {
@@ -12,11 +12,11 @@ namespace AdminTools.Commands.TeleportX
     {
         public TeleportX() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "teleportx";
+        public override string Command => "teleportx";
 
-        public override string[] Aliases { get; } = new string[] { "tpx" };
+        public override string[] Aliases { get; } = { "tpx" };
 
-        public override string Description { get; } = "Teleports all users or a user to another user";
+        public override string Description => "Teleports all users or a user to another user";
 
         public override void LoadGeneratedCommands() { }
 
@@ -35,7 +35,7 @@ namespace AdminTools.Commands.TeleportX
             }
 
             int id;
-            
+
             switch (arguments.At(0))
             {
                 case "*":
@@ -48,7 +48,7 @@ namespace AdminTools.Commands.TeleportX
                     }
 
 
-                    foreach (var plyr in Player.GetPlayers().Where(plyr => plyr.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
+                    foreach (Player plyr in Player.GetPlayers().Where(plyr => plyr.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
                         plyr.Position = ply.Position;
 
                     response = $"Everyone has been teleported to Player {ply.Nickname}";

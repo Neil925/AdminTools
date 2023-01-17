@@ -1,12 +1,11 @@
 ﻿using CommandSystem;
-using System;
-using System.Linq;
 using PlayerRoles;
 using PluginAPI.Core;
+using System;
+using System.Linq;
 
 namespace AdminTools.Commands.Grenade
 {
-    using InventorySystem.Items.ThrowableProjectiles;
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
@@ -14,11 +13,11 @@ namespace AdminTools.Commands.Grenade
     {
         public Grenade() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "grenade";
+        public override string Command => "grenade";
 
-        public override string[] Aliases { get; } = new string[] { "gn" };
+        public override string[] Aliases { get; } = { "gn" };
 
-        public override string Description { get; } = "Spawns a frag/flash/scp018 grenade on a user or users";
+        public override string Description => "Spawns a frag/flash/scp018 grenade on a user or users";
 
         public override void LoadGeneratedCommands() { }
 
@@ -36,7 +35,7 @@ namespace AdminTools.Commands.Grenade
                 return false;
             }
 
-            if (!Enum.TryParse(arguments.At(1), true, out ItemType type) || (type != ItemType.SCP018 && type != ItemType.GrenadeHE && type != ItemType.GrenadeFlash))
+            if (!Enum.TryParse(arguments.At(1), true, out ItemType type) || type != ItemType.SCP018 && type != ItemType.GrenadeHE && type != ItemType.GrenadeFlash)
             {
                 response = $"Invalid value for grenade type: {arguments.At(1)}";
                 return false;
@@ -54,8 +53,8 @@ namespace AdminTools.Commands.Grenade
                 case "all":
                     if (type == ItemType.SCP018)
                         Cassie.Message("pitch_1.5 xmas_bouncyballs", true, false);
-                    
-                    foreach (var player in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
+
+                    foreach (Player player in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
                         Handlers.CreateThrowable(type).SpawnActive(player.Position, fuseTime);
 
                     break;

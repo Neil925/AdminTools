@@ -1,8 +1,8 @@
 ﻿using CommandSystem;
+using PluginAPI.Core;
 using RemoteAdmin;
 using System;
 using System.Linq;
-using PluginAPI.Core;
 
 namespace AdminTools.Commands.Strip
 {
@@ -12,17 +12,17 @@ namespace AdminTools.Commands.Strip
     {
         public Strip() => LoadGeneratedCommands();
 
-        public override string Command { get; } = "atstrip";
+        public override string Command => "atstrip";
 
-        public override string[] Aliases { get; } = new string[] { "stp" };
+        public override string[] Aliases { get; } = { "stp" };
 
-        public override string Description { get; } = "Clears a user or users inventories instantly";
+        public override string Description => "Clears a user or users inventories instantly";
 
         public override void LoadGeneratedCommands() { }
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!CommandProcessor.CheckPermissions(((CommandSender)sender), "strip", PlayerPermissions.PlayersManagement, "AdminTools", false))
+            if (!CommandProcessor.CheckPermissions((CommandSender)sender, "strip", PlayerPermissions.PlayersManagement, "AdminTools", false))
             {
                 response = "You do not have permission to use this command";
                 return false;
