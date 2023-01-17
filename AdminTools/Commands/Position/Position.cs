@@ -11,7 +11,7 @@ namespace AdminTools.Commands.Position
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Position : ParentCommand
+    public sealed class Position : ParentCommand
     {
         public Position() => LoadGeneratedCommands();
 
@@ -50,7 +50,7 @@ namespace AdminTools.Commands.Position
                     switch (mod)
                     {
                         case PositionModifier.Set:
-                            if (arguments.Count != 5)
+                            if (arguments.Count < 5)
                             {
                                 response = "Usage: position (all / *) (set) (x position) (y position) (z position)";
                                 return false;
@@ -82,7 +82,7 @@ namespace AdminTools.Commands.Position
                             response = $"All player's positions have been set to {xval} {yval} {zval}";
                             return true;
                         case PositionModifier.Get:
-                            if (arguments.Count != 2)
+                            if (arguments.Count < 2)
                             {
                                 response = "Usage: position (all / *) (get)";
                                 return false;
@@ -112,7 +112,7 @@ namespace AdminTools.Commands.Position
                             response = message;
                             return true;
                         case PositionModifier.Add:
-                            if (arguments.Count != 4)
+                            if (arguments.Count < 4)
                             {
                                 response = "Usage: position (all / *) (add) (x, y, or z) (value)";
                                 return false;
@@ -171,7 +171,7 @@ namespace AdminTools.Commands.Position
                     switch (modf)
                     {
                         case PositionModifier.Set:
-                            if (arguments.Count != 5)
+                            if (arguments.Count < 5)
                             {
                                 response = "Usage: position (player id / name) (set) (x position) (y position) (z position)";
                                 return false;
@@ -196,7 +196,7 @@ namespace AdminTools.Commands.Position
                             response = $"Player {pl.Nickname}'s positions have been set to {xval} {yval} {zval}";
                             return true;
                         case PositionModifier.Get:
-                            if (arguments.Count != 2)
+                            if (arguments.Count < 2)
                             {
                                 response = "Usage: position (player id / name) (get)";
                                 return false;
@@ -205,7 +205,7 @@ namespace AdminTools.Commands.Position
                             response = $"Player {pl.Nickname}'s ({pl.PlayerId}) position is {pl.Position.x} {pl.Position.y} {pl.Position.z}";
                             return true;
                         case PositionModifier.Add:
-                            if (arguments.Count != 4)
+                            if (arguments.Count < 4)
                             {
                                 response = "Usage: position (player id / name) (add) (x, y, or z) (value)";
                                 return false;

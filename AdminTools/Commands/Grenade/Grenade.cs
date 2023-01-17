@@ -9,7 +9,7 @@ namespace AdminTools.Commands.Grenade
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Grenade : ParentCommand
+    public sealed class Grenade : ParentCommand
     {
         public Grenade() => LoadGeneratedCommands();
 

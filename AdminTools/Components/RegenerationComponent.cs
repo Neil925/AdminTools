@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AdminTools.Components
 {
-    public class RegenerationComponent : MonoBehaviour
+    public sealed class RegenerationComponent : MonoBehaviour
     {
         private Player _player;
         private CoroutineHandle _handle;

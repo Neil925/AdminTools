@@ -7,7 +7,7 @@ namespace AdminTools.Commands.Enums
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Enums : ParentCommand
+    public sealed class Enums : ParentCommand
     {
         public Enums() => LoadGeneratedCommands();
 

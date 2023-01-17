@@ -11,7 +11,7 @@ namespace AdminTools.Commands.Regeneration
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Regeneration : ParentCommand
+    public sealed class Regeneration : ParentCommand
     {
         public Regeneration() => LoadGeneratedCommands();
 
@@ -44,7 +44,7 @@ namespace AdminTools.Commands.Regeneration
             switch (arguments.At(0))
             {
                 case "clear":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: reg clear";
                         return false;
@@ -57,7 +57,7 @@ namespace AdminTools.Commands.Regeneration
                     response = "Regeneration has been removed from everyone";
                     return true;
                 case "list":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: regen list";
                         return false;
@@ -81,7 +81,7 @@ namespace AdminTools.Commands.Regeneration
                     response = msg;
                     return true;
                 case "heal":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: reg heal (value)";
                         return false;
@@ -97,7 +97,7 @@ namespace AdminTools.Commands.Regeneration
                     response = $"Players with regeneration will heal {healvalue} HP per interval";
                     return true;
                 case "time":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: reg time (value)";
                         return false;
@@ -114,7 +114,7 @@ namespace AdminTools.Commands.Regeneration
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: reg (all / *)";
                         return false;
@@ -126,7 +126,7 @@ namespace AdminTools.Commands.Regeneration
                     response = "Everyone on the server can regenerate health now";
                     return true;
                 default:
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: reg (player id / name)";
                         return false;

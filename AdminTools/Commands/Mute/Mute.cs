@@ -5,7 +5,7 @@ namespace AdminTools.Commands.Mute
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Mute : ParentCommand
+    public sealed class Mute : ParentCommand
     {
         public Mute() => LoadGeneratedCommands();
 

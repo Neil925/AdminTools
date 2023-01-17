@@ -6,7 +6,7 @@ using UnityEngine;
 namespace AdminTools
 {
 
-    public class Jailed
+    public sealed class Jailed
     {
         public string Userid;
         public string Name;

@@ -1,4 +1,7 @@
+using PluginAPI.Core;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace AdminTools
@@ -68,5 +71,27 @@ namespace AdminTools
         // 	}
         // 	ccm.GetComponent<CapsuleCollider>().enabled = (role.team != Team.RIP);
         // }
+        public static bool GetPlayers(ArraySegment<string> arguments, out string response, List<Player> players)
+        {
+            switch (arguments.At(0))
+            {
+                case "*":
+                case "all":
+                    players.AddRange(Player.GetPlayers());
+                    break;
+                default:
+                    Player player = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
+                    if (player == null)
+                    {
+                        response = $"Player not found: {arguments.At(0)}";
+                        return false;
+                    }
+
+                    players.Add(player);
+                    break;
+            }
+            response = string.Empty;
+            return true;
+        }
     }
 }

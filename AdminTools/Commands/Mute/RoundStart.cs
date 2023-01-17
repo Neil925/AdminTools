@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdminTools.Commands.Mute
 {
-    public class RoundStart : ICommand
+    public sealed class RoundStart : ICommand
     {
         public string Command => "roundstart";
 
@@ -21,7 +21,7 @@ namespace AdminTools.Commands.Mute
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: pmute roundstart";
                 return false;

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdminTools.Commands.Mute
 {
-    public class Com : ICommand
+    public sealed class Com : ICommand
     {
         public string Command => "icom";
 
@@ -21,7 +21,7 @@ namespace AdminTools.Commands.Mute
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: pmute icom";
                 return false;

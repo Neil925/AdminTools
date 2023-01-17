@@ -8,7 +8,7 @@ namespace AdminTools.Commands.Jail
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Jail : ParentCommand
+    public sealed class Jail : ParentCommand
     {
         public Jail() => LoadGeneratedCommands();
 
@@ -28,7 +28,7 @@ namespace AdminTools.Commands.Jail
                 return false;
             }
 
-            if (arguments.Count != 1)
+            if (arguments.Count < 1)
             {
                 response = "Usage: jail (player id / name)";
                 return false;

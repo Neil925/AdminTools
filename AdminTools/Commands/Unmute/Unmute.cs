@@ -5,7 +5,7 @@ namespace AdminTools.Commands.Unmute
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Unmute : ParentCommand
+    public sealed class Unmute : ParentCommand
     {
         public Unmute() => LoadGeneratedCommands();
 

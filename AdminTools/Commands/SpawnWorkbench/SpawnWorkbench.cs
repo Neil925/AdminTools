@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 namespace AdminTools.Commands.SpawnWorkbench
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
-    public class SpawnWorkbench : ParentCommand
+    public sealed class SpawnWorkbench : ParentCommand
     {
         public SpawnWorkbench() => LoadGeneratedCommands();
 
@@ -53,7 +53,7 @@ namespace AdminTools.Commands.SpawnWorkbench
             switch (arguments.At(0))
             {
                 case "clear":
-                    if (arguments.Count != 4)
+                    if (arguments.Count < 4)
                     {
                         response = "Usage:\nbench clear (player id / name) (minimum index) (maximum index)\n\nNOTE: Minimum index < Maximum index, You can remove from a range of all the benches you spawned (From 1 to (how many you spawned))";
                         return false;
@@ -115,7 +115,7 @@ namespace AdminTools.Commands.SpawnWorkbench
                     response = $"All workbenches from {min + 1} to {max + 1} have been cleared from Player {ply.Nickname}";
                     return true;
                 case "clearall":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: bench clearall";
                         return true;
@@ -132,7 +132,7 @@ namespace AdminTools.Commands.SpawnWorkbench
                     response = "All spawned workbenches have now been removed";
                     return true;
                 case "count":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: bench count (player id / name)";
                         return false;
@@ -155,7 +155,7 @@ namespace AdminTools.Commands.SpawnWorkbench
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 4)
+                    if (arguments.Count < 4)
                     {
                         response = "Usage: bench (all / *) (x value) (y value) (z value)";
                         return false;
@@ -192,7 +192,7 @@ namespace AdminTools.Commands.SpawnWorkbench
                     response = $"A workbench has spawned on everyone, you now spawned in a total of {(index != 1 ? $"{index} workbenches" : $"{index} workbench")}";
                     return true;
                 default:
-                    if (arguments.Count != 4)
+                    if (arguments.Count < 4)
                     {
                         response = "Usage: bench (player id / name) (x value) (y value) (z value)";
                         return false;

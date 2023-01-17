@@ -11,7 +11,7 @@ using Random = System.Random;
 
 namespace AdminTools
 {
-    public class Plugin
+    public sealed class Plugin
     {
         public const string Author = "Neil";
         public const string Name = "Admin Tools";
@@ -19,11 +19,10 @@ namespace AdminTools
 
         public EventHandlers EventHandlers;
 
-        public static Random NumGen = new();
-        public static List<Jailed> JailedPlayers = new();
-        public static Dictionary<Player, InstantKillComponent> IkHubs = new();
-        public static Dictionary<Player, RegenerationComponent> RgnHubs = new();
-        public static HashSet<Player> PryGateHubs = new();
+        public static readonly List<Jailed> JailedPlayers = new();
+        public static readonly Dictionary<Player, InstantKillComponent> IkHubs = new();
+        public static readonly Dictionary<Player, RegenerationComponent> RgnHubs = new();
+        public static readonly HashSet<Player> PryGateHubs = new();
         public static Dictionary<Player, List<GameObject>> BchHubs = new();
         public static Dictionary<Player, List<GameObject>> DumHubs = new();
         public static float HealthGain = 5;
@@ -31,7 +30,7 @@ namespace AdminTools
         public string OverwatchFilePath;
         public string HiddenTagsFilePath;
         public static bool RestartOnEnd = false;
-        public static HashSet<Player> RoundStartMutes = new();
+        public static readonly HashSet<Player> RoundStartMutes = new();
 
         [PluginConfig] public Config Config;
 

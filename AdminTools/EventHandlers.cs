@@ -22,11 +22,11 @@ using Object = UnityEngine.Object;
 namespace AdminTools
 {
 
-    public class EventHandlers
+    public sealed class EventHandlers
     {
         public static Plugin Plugin;
         public EventHandlers(Plugin plugin) => Plugin = plugin;
-        public static List<Player> BreakDoorsList { get; } = new();
+        public static readonly List<Player> BreakDoorsList = new();
 
         [PluginEvent(ServerEventType.PlayerInteractDoor)]
         public void OnDoorOpen(Player player, DoorVariant door, bool canOpen)
@@ -53,8 +53,6 @@ namespace AdminTools
             dummyIndex = 0;
             GameObject obj = Object.Instantiate(NetworkManager.singleton.playerPrefab);
             CharacterClassManager ccm = obj.GetComponent<CharacterClassManager>();
-            if (ccm == null)
-                Log.Error("CCM is null, this can cause problems!");
             ccm._hub.roleManager.ServerSetRole(role, RoleChangeReason.RemoteAdmin);
             ccm.GodMode = true;
             obj.GetComponent<NicknameSync>().Network_myNickSync = "Dummy";
@@ -63,28 +61,22 @@ namespace AdminTools
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             NetworkServer.Spawn(obj);
-            if (Plugin.DumHubs.TryGetValue(ply, out List<GameObject> objs))
-            {
-                objs.Add(obj);
-            }
-            else
-            {
-                Plugin.DumHubs.Add(ply, new List<GameObject>());
-                Plugin.DumHubs[ply].Add(obj);
-                dummyIndex = Plugin.DumHubs[ply].Count;
-            }
+            List<GameObject> objs = Plugin.DumHubs.GetOrAdd(ply, GameObjectListFactory);
+            objs.Add(obj);
+            dummyIndex = objs.Count;
             if (dummyIndex != 1)
                 dummyIndex = objs.Count;
         }
+        private static List<GameObject> GameObjectListFactory() => new();
 
         public static IEnumerator<float> SpawnBodies(Player player, RoleTypeId role, int count)
         {
+            if (!PlayerRoleLoader.AllRoles.TryGetValue(role, out PlayerRoleBase roleBase) || roleBase is not IRagdollRole currentRole)
+                yield break;
             for (int i = 0; i < count; i++)
             {
-                if (!PlayerRoleLoader.AllRoles.TryGetValue(role, out PlayerRoleBase roleBase) || roleBase is not IRagdollRole currentRole)
-                    yield break;
 
-                GameObject gameObject = Object.Instantiate(currentRole.Ragdoll.gameObject);
+                GameObject gameObject = Object.Instantiate(currentRole.Ragdoll.gameObject, player.Position, player.Camera.rotation);
                 if (gameObject.TryGetComponent(out BasicRagdoll component))
                 {
                     Transform transform = currentRole.Ragdoll.transform;
@@ -96,7 +88,7 @@ namespace AdminTools
 
                 RagdollManager.ServerSpawnRagdoll(ReferenceHub._hostHub,
                     new UniversalDamageHandler(0.0f, DeathTranslations.Unknown));
-                yield return Timing.WaitForSeconds(0.15f);
+                yield return Timing.WaitForOneFrame;
             }
         }
 
@@ -114,9 +106,7 @@ namespace AdminTools
             {
                 Log.Debug("Spawning workbench");
                 benchIndex = 0;
-                GameObject bench =
-                    Object.Instantiate(
-                        NetworkManager.singleton.spawnPrefabs.Find(p => p.gameObject.name == "Work Station"));
+                GameObject bench = Object.Instantiate(NetworkManager.singleton.spawnPrefabs.Find(p => p.gameObject.name == "Work Station"));
                 rotation.x += 180;
                 rotation.z += 180;
                 Offset offset = new()
@@ -127,16 +117,9 @@ namespace AdminTools
                 };
                 bench.gameObject.transform.localScale = size;
                 NetworkServer.Spawn(bench);
-                if (Plugin.BchHubs.TryGetValue(ply, out List<GameObject> objs))
-                {
-                    objs.Add(bench);
-                }
-                else
-                {
-                    Plugin.BchHubs.Add(ply, new List<GameObject>());
-                    Plugin.BchHubs[ply].Add(bench);
-                    benchIndex = Plugin.BchHubs[ply].Count;
-                }
+                List<GameObject> objs = Plugin.BchHubs.GetOrAdd(ply, GameObjectListFactory);
+                objs.Add(bench);
+                benchIndex = Plugin.BchHubs[ply].Count;
 
                 if (benchIndex != 1)
                     benchIndex = objs.Count;
@@ -196,10 +179,10 @@ namespace AdminTools
                     if (player.GameObject == target)
                         continue;
 
-                    NetworkConnection playerCon = player.Connection;
-                    playerCon.Send(destroyMessage);
+                    NetworkConnection connection = player.Connection;
+                    connection.Send(destroyMessage);
 
-                    object[] parameters = { identity, playerCon };
+                    object[] parameters = { identity, connection };
                     typeof(NetworkServer).InvokeStaticMethod("SendSpawnMessage", parameters);
                 }
             }
@@ -228,11 +211,11 @@ namespace AdminTools
             }
         }
 
-        public static IEnumerator<float> DoJail(Player player, bool skipadd = false)
+        public static IEnumerator<float> DoJail(Player player, bool skipAdd = false)
         {
             Dictionary<AmmoType, ushort> ammo = player.Ammo().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             List<ItemType> items = player.ReferenceHub.inventory.UserInventory.Items.Select(x => x.Value.ItemTypeId).ToList();
-            if (!skipadd)
+            if (!skipAdd)
             {
                 Plugin.JailedPlayers.Add(new Jailed
                 {

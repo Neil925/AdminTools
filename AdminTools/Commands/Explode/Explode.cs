@@ -10,7 +10,7 @@ namespace AdminTools.Commands.Explode
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Explode : ParentCommand
+    public sealed class Explode : ParentCommand
     {
         public Explode() => LoadGeneratedCommands();
 
@@ -30,7 +30,7 @@ namespace AdminTools.Commands.Explode
                 return false;
             }
 
-            if (arguments.Count != 1)
+            if (arguments.Count < 1)
             {
                 response = "Usage: expl ((player id / name) or (all / *))";
                 return false;
@@ -40,7 +40,7 @@ namespace AdminTools.Commands.Explode
             {
                 case "*":
                 case "all":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: expl (all / *)";
                         return false;
@@ -55,7 +55,7 @@ namespace AdminTools.Commands.Explode
                     response = "Everyone exploded, Hubert cannot believe you have done this";
                     return true;
                 default:
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: expl (player id / name)";
                         return false;

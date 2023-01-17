@@ -7,7 +7,7 @@ namespace AdminTools.Commands.Scale
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Scale : ParentCommand
+    public sealed class Scale : ParentCommand
     {
         public Scale() => LoadGeneratedCommands();
 
@@ -37,7 +37,7 @@ namespace AdminTools.Commands.Scale
             switch (arguments.At(0))
             {
                 case "reset":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: scale reset";
                         return false;
@@ -49,7 +49,7 @@ namespace AdminTools.Commands.Scale
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: scale (all / *) (value)";
                         return false;
@@ -67,7 +67,7 @@ namespace AdminTools.Commands.Scale
                     response = $"Everyone's scale has been set to {value}";
                     return true;
                 default:
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: scale (player id / name) (value)";
                         return false;

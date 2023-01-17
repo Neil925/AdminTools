@@ -5,7 +5,7 @@ namespace AdminTools.Commands.Inventory
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Inventory : ParentCommand
+    public sealed class Inventory : ParentCommand
     {
         public Inventory() => LoadGeneratedCommands();
 

@@ -8,7 +8,7 @@ namespace AdminTools.Commands.AdminBroadcast
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class AdminBroadcast : ParentCommand
+    public sealed class AdminBroadcast : ParentCommand
     {
         public AdminBroadcast() => LoadGeneratedCommands();
 
@@ -40,12 +40,13 @@ namespace AdminTools.Commands.AdminBroadcast
                 return false;
             }
 
-            foreach (Player pl in Player.GetPlayers().Where(pl => pl.ReferenceHub.serverRoles != null && pl.ReferenceHub.serverRoles.RemoteAdmin))
+            foreach (Player pl in Player.GetPlayers().Where(HasAdminChatAccess))
                 pl.SendBroadcast(EventHandlers.FormatArguments(arguments, 1) + $" ~{((CommandSender)sender).Nickname}",
                     t, Broadcast.BroadcastFlags.AdminChat);
 
             response = "Message sent to all currently online staff";
             return true;
         }
+        private static bool HasAdminChatAccess(Player pl) => pl.ReferenceHub.serverRoles != null && pl.ReferenceHub.serverRoles.RemoteAdmin;
     }
 }

@@ -4,7 +4,7 @@ using System;
 
 namespace AdminTools.Commands.Unmute
 {
-    public class RoundStart : ICommand
+    public sealed class RoundStart : ICommand
     {
         public string Command => "roundstart";
 
@@ -20,7 +20,7 @@ namespace AdminTools.Commands.Unmute
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: pumute roundstart";
                 return false;

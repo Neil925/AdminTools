@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdminTools.Commands.Unmute
 {
-    public class All : ICommand
+    public sealed class All : ICommand
     {
         public string Command => "all";
 
@@ -21,7 +21,7 @@ namespace AdminTools.Commands.Unmute
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: punmute all";
                 return false;

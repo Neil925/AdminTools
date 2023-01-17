@@ -5,7 +5,7 @@ namespace AdminTools.Commands.DropItem
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class DropItem : ParentCommand
+    public sealed class DropItem : ParentCommand
     {
         public DropItem() => LoadGeneratedCommands();
 
@@ -28,7 +28,7 @@ namespace AdminTools.Commands.DropItem
             //     return false;
             // }
             //
-            // if (arguments.Count != 3)
+            // if (arguments.Count < 3)
             // {
             //     response = "Usage: dropitem ((player id/ name) or (all / *)) (ItemType) (amount (200 max for one user, 15 max for all users))";
             //     return false;
@@ -38,7 +38,7 @@ namespace AdminTools.Commands.DropItem
             // {
             //     case "*":
             //     case "all":
-            //         if (arguments.Count != 3)
+            //         if (arguments.Count < 3)
             //         {
             //             response = "Usage: dropitem (all / *) (ItemType) (amount (15 max))";
             //             return false;
@@ -63,7 +63,7 @@ namespace AdminTools.Commands.DropItem
             //         response = $"{amount} of {item.ToString()} was spawned on everyone (\"Hehexd\" - Galaxy119)";
             //         return true;
             //     default:
-            //         if (arguments.Count != 3)
+            //         if (arguments.Count < 3)
             //         {
             //             response = "Usage: dropitem (player id / name) (ItemType) (amount (200 max))";
             //             return false;

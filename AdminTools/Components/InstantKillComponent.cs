@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AdminTools.Components
 {
-    public class InstantKillComponent : MonoBehaviour
+    public sealed class InstantKillComponent : MonoBehaviour
     {
         public Player Player;
         public void Awake()

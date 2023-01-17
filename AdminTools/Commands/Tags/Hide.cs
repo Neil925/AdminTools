@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdminTools.Commands.Tags
 {
-    public class Hide : ICommand
+    public sealed class Hide : ICommand
     {
         public string Command => "hide";
 
@@ -21,7 +21,7 @@ namespace AdminTools.Commands.Tags
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: tags hide";
                 return false;

@@ -10,7 +10,7 @@ namespace AdminTools.Commands.SpawnRagdoll
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class SpawnRagdoll : ParentCommand
+    public sealed class SpawnRagdoll : ParentCommand
     {
         public SpawnRagdoll() => LoadGeneratedCommands();
 
@@ -30,7 +30,7 @@ namespace AdminTools.Commands.SpawnRagdoll
                 return false;
             }
 
-            if (arguments.Count != 3)
+            if (arguments.Count < 3)
             {
                 response = "Usage: spawnragdoll ((player id / name) or (all / *)) (RoleTypeId) (amount)";
                 return false;

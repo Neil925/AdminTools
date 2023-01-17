@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 namespace AdminTools.Commands.Dummy
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
-    public class Dummy : ParentCommand
+    public sealed class Dummy : ParentCommand
     {
         public Dummy() => LoadGeneratedCommands();
 
@@ -52,7 +52,7 @@ namespace AdminTools.Commands.Dummy
             switch (arguments.At(0))
             {
                 case "clear":
-                    if (arguments.Count != 4)
+                    if (arguments.Count < 4)
                     {
                         response = "Usage: dummy clear (player id / name) (minimum index) (maximum index)\nNote: Minimum < Maximum, you can remove from a range of dummies a user spawns";
                         return false;
@@ -114,7 +114,7 @@ namespace AdminTools.Commands.Dummy
                     response = $"All dummies from {min + 1} to {max + 1} have been cleared from Player {ply.Nickname}";
                     return true;
                 case "clearall":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: dummy clearall";
                         return false;
@@ -131,7 +131,7 @@ namespace AdminTools.Commands.Dummy
                     response = "All spawned dummies have now been removed";
                     return true;
                 case "count":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: dummy count (player id / name)";
                         return false;
@@ -154,7 +154,7 @@ namespace AdminTools.Commands.Dummy
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 5)
+                    if (arguments.Count < 5)
                     {
                         response = "Usage: dummy (all / *) (RoleType) (x value) (y value) (z value)";
                         return false;
@@ -193,7 +193,7 @@ namespace AdminTools.Commands.Dummy
                     response = $"A {role.ToString()} dummy has spawned on everyone, you now spawned in a total of {(index != 1 ? $"{index} dummies" : $"{index} dummies")}";
                     return true;
                 default:
-                    if (arguments.Count != 5)
+                    if (arguments.Count < 5)
                     {
                         response = "Usage: dummy (player id / name) (RoleType) (x value) (y value) (z value)";
                         return false;

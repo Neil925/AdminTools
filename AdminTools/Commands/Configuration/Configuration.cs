@@ -5,7 +5,7 @@ namespace AdminTools.Commands.Configuration
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Configuration : ParentCommand
+    public sealed class Configuration : ParentCommand
     {
         public Configuration() => LoadGeneratedCommands();
 

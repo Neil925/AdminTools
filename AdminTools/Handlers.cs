@@ -283,8 +283,7 @@ namespace AdminTools
         public static void SpawnActive(this ThrowableItem item, Vector3 position, float fuseTime = default,
             Player owner = null)
         {
-            ExplosionGrenade grenade =
-                (ExplosionGrenade)Object.Instantiate(item.Projectile, position, Quaternion.identity);
+            ExplosionGrenade grenade = (ExplosionGrenade)Object.Instantiate(item.Projectile, position, Quaternion.identity);
             grenade._fuseTime = fuseTime;
             grenade.PreviousOwner = new Footprint(owner is not null ? owner.ReferenceHub : ReferenceHub._hostHub);
             NetworkServer.Spawn(grenade.gameObject);

@@ -47,7 +47,7 @@ namespace AdminTools.Commands.Size
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 4)
+                    if (arguments.Count < 4)
                     {
                         response = "Usage: size (all / *) (x) (y) (z)";
                         return false;
@@ -79,7 +79,7 @@ namespace AdminTools.Commands.Size
                     response = $"Everyone's scale has been set to {xval} {yval} {zval}";
                     return true;
                 default:
-                    if (arguments.Count != 4)
+                    if (arguments.Count < 4)
                     {
                         response = "Usage: size (player id / name) (x) (y) (z)";
                         return false;

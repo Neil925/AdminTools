@@ -5,7 +5,7 @@ namespace AdminTools.Commands.RandomTeleport
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class RandomTeleport : ParentCommand
+    public sealed class RandomTeleport : ParentCommand
     {
         public RandomTeleport() => LoadGeneratedCommands();
 
@@ -28,7 +28,7 @@ namespace AdminTools.Commands.RandomTeleport
             //     return false;
             // }
             //
-            // if (arguments.Count != 1)
+            // if (arguments.Count < 1)
             // {
             //     response = "Usage: randomtp ((player id / name) or (all / *))";
             //     return false;

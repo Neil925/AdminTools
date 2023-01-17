@@ -5,7 +5,7 @@ namespace AdminTools.Commands.Tags
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Tags : ParentCommand
+    public sealed class Tags : ParentCommand
     {
         public Tags() => LoadGeneratedCommands();
 

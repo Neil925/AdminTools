@@ -11,7 +11,7 @@ namespace AdminTools.Commands.InstantKill
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class InstantKill : ParentCommand
+    public sealed class InstantKill : ParentCommand
     {
         public InstantKill() => LoadGeneratedCommands();
 
@@ -45,7 +45,7 @@ namespace AdminTools.Commands.InstantKill
             switch (arguments.At(0))
             {
                 case "clear":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: instakill clear";
                         return false;
@@ -58,7 +58,7 @@ namespace AdminTools.Commands.InstantKill
                     response = "Instant killing has been removed from everyone";
                     return true;
                 case "list":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: instakill clear";
                         return false;
@@ -82,7 +82,7 @@ namespace AdminTools.Commands.InstantKill
                     response = msg;
                     return true;
                 case "remove":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: instakill remove (player id / name)";
                         return false;
@@ -106,7 +106,7 @@ namespace AdminTools.Commands.InstantKill
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: instakill all / *";
                         return false;
@@ -118,7 +118,7 @@ namespace AdminTools.Commands.InstantKill
                     response = "Everyone on the server can instantly kill other users now";
                     return true;
                 default:
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: instakill (player id / name)";
                         return false;

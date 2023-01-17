@@ -9,7 +9,7 @@ using System.Text;
 namespace AdminTools.Commands.Inventory
 {
 
-    public class See : ICommand
+    public sealed class See : ICommand
     {
         public string Command => "see";
 
@@ -25,7 +25,7 @@ namespace AdminTools.Commands.Inventory
                 return false;
             }
 
-            if (arguments.Count != 1)
+            if (arguments.Count < 1)
             {
                 response = "Usage: inventory see (player id / name)";
                 return false;

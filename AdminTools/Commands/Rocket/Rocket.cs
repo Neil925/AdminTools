@@ -9,7 +9,7 @@ namespace AdminTools.Commands.Rocket
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Rocket : ParentCommand
+    public sealed class Rocket : ParentCommand
     {
         public Rocket() => LoadGeneratedCommands();
 
@@ -29,7 +29,7 @@ namespace AdminTools.Commands.Rocket
                 return false;
             }
 
-            if (arguments.Count != 2)
+            if (arguments.Count < 2)
             {
                 response = "Usage: rocket ((player id / name) or (all / *)) (speed)";
                 return false;

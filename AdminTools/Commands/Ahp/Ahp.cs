@@ -10,7 +10,7 @@ namespace AdminTools.Commands.Ahp
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Ahp : ParentCommand
+    public sealed class Ahp : ParentCommand
     {
         public Ahp() => LoadGeneratedCommands();
 
@@ -30,7 +30,7 @@ namespace AdminTools.Commands.Ahp
                 return false;
             }
 
-            if (arguments.Count != 2)
+            if (arguments.Count < 2)
             {
                 response = "Usage: ahp ((player id / name) or (all / *)) (value)";
                 return false;
@@ -43,25 +43,9 @@ namespace AdminTools.Commands.Ahp
                 return false;
             }
 
-            switch (arguments.At(0))
-            {
-                case "*":
-                case "all":
-                    players.AddRange(Player.GetPlayers());
-                    break;
-                default:
-                    Player player = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (player == null)
-                    {
-                        response = $"Player not found: {arguments.At(0)}";
-                        return false;
-                    }
+            if (!Extensions.GetPlayers(arguments, out response, players))
+                return false;
 
-                    players.Add(player);
-                    break;
-            }
-
-            response = string.Empty;
             foreach (Player p in players)
             {
                 p.ArtificialHealth = value;

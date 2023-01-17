@@ -4,7 +4,7 @@ using System;
 
 namespace AdminTools.Commands.Configuration
 {
-    public class Reload : ICommand
+    public sealed class Reload : ICommand
     {
         public string Command => "reload";
 
@@ -20,7 +20,7 @@ namespace AdminTools.Commands.Configuration
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: cfig reload";
                 return false;

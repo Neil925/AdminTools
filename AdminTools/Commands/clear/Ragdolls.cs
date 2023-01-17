@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace AdminTools.Commands.clear
 {
-    class Ragdolls : ICommand
+    sealed class Ragdolls : ICommand
     {
         public string Command => "ragdolls";
 
@@ -21,7 +21,7 @@ namespace AdminTools.Commands.clear
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: cleanup ragdolls";
                 return false;

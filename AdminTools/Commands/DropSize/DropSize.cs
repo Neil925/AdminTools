@@ -5,7 +5,7 @@ namespace AdminTools.Commands.DropSize
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class DropSize : ParentCommand
+    public sealed class DropSize : ParentCommand
     {
         public DropSize() => LoadGeneratedCommands();
 

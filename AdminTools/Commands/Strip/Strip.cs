@@ -8,7 +8,7 @@ namespace AdminTools.Commands.Strip
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Strip : ParentCommand
+    public sealed class Strip : ParentCommand
     {
         public Strip() => LoadGeneratedCommands();
 
@@ -28,7 +28,7 @@ namespace AdminTools.Commands.Strip
                 return false;
             }
 
-            if (arguments.Count != 1)
+            if (arguments.Count < 1)
             {
                 response = "Usage: strip ((player id / name) or (all / *))";
                 return false;

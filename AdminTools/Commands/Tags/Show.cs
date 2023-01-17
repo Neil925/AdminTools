@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdminTools.Commands.Tags
 {
-    public class Show : ICommand
+    public sealed class Show : ICommand
     {
         public string Command => "show";
 
@@ -21,7 +21,7 @@ namespace AdminTools.Commands.Tags
                 return false;
             }
 
-            if (arguments.Count != 0)
+            if (arguments.Count < 0)
             {
                 response = "Usage: tags show";
                 return false;

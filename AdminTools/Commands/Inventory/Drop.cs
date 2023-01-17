@@ -7,7 +7,7 @@ namespace AdminTools.Commands.Inventory
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Drop : ParentCommand
+    public sealed class Drop : ParentCommand
     {
         public Drop() => LoadGeneratedCommands();
 
@@ -27,7 +27,7 @@ namespace AdminTools.Commands.Inventory
                 return false;
             }
 
-            if (arguments.Count != 1)
+            if (arguments.Count < 1)
             {
                 response = "Usage: inventory drop ((player id / name) or (all / *))";
                 return false;

@@ -9,7 +9,7 @@ namespace AdminTools.Commands.PryGates
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class PryGates : ParentCommand
+    public sealed class PryGates : ParentCommand
     {
         public PryGates() => LoadGeneratedCommands();
 
@@ -43,7 +43,7 @@ namespace AdminTools.Commands.PryGates
             switch (arguments.At(0))
             {
                 case "clear":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: prygates clear";
                         return false;
@@ -53,7 +53,7 @@ namespace AdminTools.Commands.PryGates
                     response = "The ability to pry gates is cleared from all players now";
                     return true;
                 case "list":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: prygates list";
                         return false;
@@ -74,7 +74,7 @@ namespace AdminTools.Commands.PryGates
                     StringBuilderPool.Shared.Return(playerLister);
                     return true;
                 case "remove":
-                    if (arguments.Count != 2)
+                    if (arguments.Count < 2)
                     {
                         response = "Usage: prygate remove (player id / name)";
                         return false;
@@ -97,7 +97,7 @@ namespace AdminTools.Commands.PryGates
                     return true;
                 case "*":
                 case "all":
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: prygates (all / *)";
                         return false;
@@ -111,7 +111,7 @@ namespace AdminTools.Commands.PryGates
                     response = "The ability to pry gates open is on for all players now";
                     return true;
                 default:
-                    if (arguments.Count != 1)
+                    if (arguments.Count < 1)
                     {
                         response = "Usage: prygate (player id / name)";
                         return false;

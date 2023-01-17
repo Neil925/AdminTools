@@ -8,7 +8,7 @@ namespace AdminTools.Commands.Kill
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Kill : ParentCommand
+    public sealed class Kill : ParentCommand
     {
         public Kill() => LoadGeneratedCommands();
 
@@ -28,7 +28,7 @@ namespace AdminTools.Commands.Kill
                 return false;
             }
 
-            if (arguments.Count != 1)
+            if (arguments.Count < 1)
             {
                 response = "Usage: kill ((player id / name) or (all / *))";
                 return false;

@@ -5,7 +5,7 @@ namespace AdminTools.Commands.clear
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class Clear : ParentCommand
+    public sealed class Clear : ParentCommand
     {
         public Clear() => LoadGeneratedCommands();
 

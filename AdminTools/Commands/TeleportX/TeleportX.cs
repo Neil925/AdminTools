@@ -8,7 +8,7 @@ namespace AdminTools.Commands.TeleportX
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public class TeleportX : ParentCommand
+    public sealed class TeleportX : ParentCommand
     {
         public TeleportX() => LoadGeneratedCommands();
 
@@ -28,7 +28,7 @@ namespace AdminTools.Commands.TeleportX
                 return false;
             }
 
-            if (arguments.Count != 2)
+            if (arguments.Count < 2)
             {
                 response = "Usage: teleportx (People teleported: (player id / name) or (all / *)) (Teleported to: (player id / name) or (all / *))";
                 return false;
