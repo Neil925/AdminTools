@@ -26,12 +26,11 @@ namespace AdminTools
     {
         public static Plugin Plugin;
         public EventHandlers(Plugin plugin) => Plugin = plugin;
-        public static readonly List<Player> BreakDoorsList = new();
 
         [PluginEvent(ServerEventType.PlayerInteractDoor)]
-        public void OnDoorOpen(Player player, DoorVariant door, bool canOpen)
+        public void OnDoorOpen(AtPlayer player, DoorVariant door, bool canOpen)
         {
-            if (Plugin.PryGateHubs.Contains(player))
+            if (player.PryGateEnabled)
                 door.TryPryOpen(player);
         }
 
@@ -95,7 +94,8 @@ namespace AdminTools
         [PluginEvent(ServerEventType.PlayerLeft)]
         public void OnPlayerDestroyed(Player player, Player attacker, DamageHandlerBase damageHandler)
         {
-            if (!Plugin.RoundStartMutes.Contains(player)) return;
+            if (!Plugin.RoundStartMutes.Contains(player))
+                return;
             player.Unmute(true);
             Plugin.RoundStartMutes.Remove(player);
         }
@@ -222,9 +222,8 @@ namespace AdminTools
                     Health = player.Health,
                     Position = player.Position,
                     Items = items,
-                    Name = player.Nickname,
                     Role = player.Role,
-                    Userid = player.UserId,
+                    UserId = player.UserId,
                     CurrentRound = true,
                     Ammo = ammo
                 });
@@ -240,7 +239,7 @@ namespace AdminTools
 
         public static IEnumerator<float> DoUnJail(Player player)
         {
-            Jailed jail = Plugin.JailedPlayers.Find(j => j.Userid == player.UserId);
+            Jailed jail = Plugin.JailedPlayers.Find(j => j.UserId == player.UserId);
             if (jail.CurrentRound)
             {
                 player.SetRole(jail.Role);
@@ -270,7 +269,7 @@ namespace AdminTools
         {
             try
             {
-                if (Plugin.JailedPlayers.Any(j => j.Userid == player.UserId))
+                if (Plugin.JailedPlayers.Any(j => j.UserId == player.UserId))
                     Timing.RunCoroutine(DoJail(player, true));
 
                 if (File.ReadAllText(Plugin.OverwatchFilePath).Contains(player.UserId))
@@ -352,17 +351,10 @@ namespace AdminTools
             Round.Restart(false, true);
         }
 
-        [PluginEvent(ServerEventType.WaitingForPlayers)]
-        public void OnWaitingForPlayers()
-        {
-            Plugin.IkHubs.Clear();
-            BreakDoorsList.Clear();
-        }
-
         [PluginEvent(ServerEventType.PlayerInteractDoor)]
-        public void OnPlayerInteractingDoor(Player player, DoorVariant door, bool canOpen)
+        public void OnPlayerInteractingDoor(AtPlayer player, DoorVariant door, bool canOpen)
         {
-            if (BreakDoorsList.Contains(player))
+            if (player.BreakDoorsEnabled)
                 door.BreakDoor();
         }
     }

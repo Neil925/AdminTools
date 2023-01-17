@@ -280,11 +280,11 @@ namespace AdminTools
 
         public static bool TryPryOpen(this DoorVariant door, Player player) => door is PryableDoor pryable && pryable.TryPryGate(player.ReferenceHub);
 
-        public static void SpawnActive(this ThrowableItem item, Vector3 position, float fuseTime = default,
+        public static void SpawnActive(this ThrowableItem item, Vector3 position, float fuseTime = -1f,
             Player owner = null)
         {
             ExplosionGrenade grenade = (ExplosionGrenade)Object.Instantiate(item.Projectile, position, Quaternion.identity);
-            grenade._fuseTime = fuseTime;
+            grenade._fuseTime = fuseTime < 0 ? ((ExplosionGrenade)item.Projectile)._fuseTime : fuseTime;
             grenade.PreviousOwner = new Footprint(owner is not null ? owner.ReferenceHub : ReferenceHub._hostHub);
             NetworkServer.Spawn(grenade.gameObject);
             grenade.ServerActivate();

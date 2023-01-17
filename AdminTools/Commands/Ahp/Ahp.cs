@@ -1,4 +1,5 @@
 ﻿using CommandSystem;
+using PlayerStatsSystem;
 using PluginAPI.Core;
 using RemoteAdmin;
 using System;
@@ -42,13 +43,32 @@ namespace AdminTools.Commands.Ahp
                 response = $"Invalid value for AHP: {value}";
                 return false;
             }
+            switch (arguments.At(0))
+            {
+                case "*":
+                case "all":
+                    players.AddRange(Player.GetPlayers());
+                    break;
+                default:
+                    Player player = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
+                    if (player == null)
+                    {
+                        response = $"Player not found: {arguments.At(0)}";
+                        return false;
+                    }
 
-            if (!Extensions.GetPlayers(arguments, out response, players))
-                return false;
-
+                    players.Add(player);
+                    break;
+            }
+            response = "";
             foreach (Player p in players)
             {
-                p.ArtificialHealth = value;
+                AhpStat stat = p.GetStatModule<AhpStat>();
+                List<AhpStat.AhpProcess> processes = stat._activeProcesses;
+                if (processes.Count < 1)
+                    stat.ServerAddProcess(value);
+                else
+                    processes[0].CurrentAmount = value;
                 response += $"\n{p.Nickname}'s AHP has been set to {value}";
             }
 

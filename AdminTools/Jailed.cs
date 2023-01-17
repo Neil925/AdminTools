@@ -8,8 +8,7 @@ namespace AdminTools
 
     public sealed class Jailed
     {
-        public string Userid;
-        public string Name;
+        public string UserId;
         public List<ItemType> Items;
         public RoleTypeId Role;
         public Vector3 Position;

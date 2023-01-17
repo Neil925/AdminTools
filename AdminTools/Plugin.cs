@@ -1,4 +1,3 @@
-using AdminTools.Components;
 using PlayerStatsSystem;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
@@ -6,8 +5,8 @@ using PluginAPI.Events;
 using PluginAPI.Helpers;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
-using Random = System.Random;
 
 namespace AdminTools
 {
@@ -20,11 +19,8 @@ namespace AdminTools
         public EventHandlers EventHandlers;
 
         public static readonly List<Jailed> JailedPlayers = new();
-        public static readonly Dictionary<Player, InstantKillComponent> IkHubs = new();
-        public static readonly Dictionary<Player, RegenerationComponent> RgnHubs = new();
-        public static readonly HashSet<Player> PryGateHubs = new();
-        public static Dictionary<Player, List<GameObject>> BchHubs = new();
-        public static Dictionary<Player, List<GameObject>> DumHubs = new();
+        public static readonly Dictionary<Player, List<GameObject>> BchHubs = new();
+        public static readonly Dictionary<Player, List<GameObject>> DumHubs = new();
         public static float HealthGain = 5;
         public static float HealthInterval = 1;
         public string OverwatchFilePath;
@@ -37,6 +33,7 @@ namespace AdminTools
         [PluginEntryPoint(Name, Version, "Tools to better support staff", Author)]
         public void Start()
         {
+            FactoryManager.RegisterPlayerFactory<AdminToolsPlayerFactory>(this);
             foreach (KeyValuePair<byte, DeathTranslation> translation in DeathTranslations.TranslationsById)
                 Handlers.UniversalDamageTypeIDs.Add(translation.Value, translation.Key);
 
@@ -59,8 +56,9 @@ namespace AdminTools
             EventHandlers = new EventHandlers(this);
             EventManager.RegisterEvents(this, EventHandlers);
         }
-        
+
         [PluginUnload]
         public void Stop() => EventManager.UnregisterEvents(this, EventHandlers);
+
     }
 }

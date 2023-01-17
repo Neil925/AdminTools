@@ -91,12 +91,14 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="AdminToolsPlayerFactory.cs" />
+        <Compile Include="AtPlayer.cs" />
         <Compile Include="Commands\AdminBroadcast\AdminBroadcast.cs" />
         <Compile Include="Commands\Ahp\Ahp.cs" />
         <Compile Include="Commands\Ball\Ball.cs" />
-        <Compile Include="Commands\clear\clear.cs" />
-        <Compile Include="Commands\clear\Items.cs" />
-        <Compile Include="Commands\clear\Ragdolls.cs" />
+        <Compile Include="Commands\Clear\Clear.cs" />
+        <Compile Include="Commands\Clear\Items.cs" />
+        <Compile Include="Commands\Clear\Ragdolls.cs" />
         <Compile Include="Commands\Configuration\Configuration.cs" />
         <Compile Include="Commands\Configuration\Reload.cs" />
         <Compile Include="Commands\DropItem\DropItem.cs" />
@@ -133,8 +135,6 @@
         <Compile Include="Commands\Unmute\ICom.cs" />
         <Compile Include="Commands\Unmute\RoundStart.cs" />
         <Compile Include="Commands\Unmute\Unmute.cs" />
-        <Compile Include="Components\InstantKillComponent.cs" />
-        <Compile Include="Components\RegenerationComponent.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="Enums.cs" />
         <Compile Include="Enums\AmmoType.cs" />
