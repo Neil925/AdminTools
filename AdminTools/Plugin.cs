@@ -2,10 +2,8 @@ using PlayerStatsSystem;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
 using PluginAPI.Events;
-using PluginAPI.Helpers;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace AdminTools
@@ -25,8 +23,7 @@ namespace AdminTools
         public static float HealthInterval = 1;
         public string OverwatchFilePath;
         public string HiddenTagsFilePath;
-        public static bool RestartOnEnd = false;
-        public static readonly HashSet<Player> RoundStartMutes = new();
+        public static readonly HashSet<string> RoundStartMutes = new();
 
         [PluginConfig] public Config Config;
 
@@ -37,7 +34,7 @@ namespace AdminTools
             foreach (KeyValuePair<byte, DeathTranslation> translation in DeathTranslations.TranslationsById)
                 Handlers.UniversalDamageTypeIDs.Add(translation.Value, translation.Key);
 
-            string path = Path.Combine(Paths.LocalPlugins.Plugins, "Admin Tools");
+            string path = PluginHandler.Get(this).PluginDirectoryPath;
             string overwatchFileName = Path.Combine(path, "AdminTools-Overwatch.txt");
             string hiddenTagFileName = Path.Combine(path, "AdminTools-HiddenTags.txt");
 

@@ -94,10 +94,8 @@ namespace AdminTools
         [PluginEvent(ServerEventType.PlayerLeft)]
         public void OnPlayerDestroyed(AtPlayer player)
         {
-            if (player.IsRoundStartMuted)
-                return;
-            player.Unmute(true);
-            player.IsRoundStartMuted = false;
+            if (Plugin.RoundStartMutes.Remove(player.UserId))
+                player.Unmute(true);
         }
 
         public static void SpawnWorkbench(Player ply, Vector3 position, Vector3 rotation, Vector3 size, out int benchIndex)
@@ -134,12 +132,15 @@ namespace AdminTools
             }
         }
 
-        public static void SetPlayerScale(GameObject target, float x, float y, float z)
+        public static void SetPlayerScale(Player target, Vector3 scale)
         {
+            GameObject go = target.GameObject;
+            if (go.transform.localScale == scale)
+                return;
             try
             {
-                NetworkIdentity identity = target.GetComponent<NetworkIdentity>();
-                target.transform.localScale = new Vector3(1 * x, 1 * y, 1 * z);
+                NetworkIdentity identity = target.ReferenceHub.networkIdentity;
+                go.transform.localScale = scale;
 
                 ObjectDestroyMessage destroyMessage = new()
                 {
@@ -148,54 +149,22 @@ namespace AdminTools
 
                 foreach (Player player in Player.GetPlayers())
                 {
-                    NetworkConnection playerCon = player.Connection;
-                    if (player.GameObject != target)
-                        playerCon.Send(destroyMessage);
-
-                    object[] parameters =
-                    {
-                        identity, playerCon
-                    };
-                    typeof(NetworkServer).InvokeStaticMethod("SendSpawnMessage", parameters);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Info($"Set Scale error: {e}");
-            }
-        }
-
-        public static void SetPlayerScale(GameObject target, float scale)
-        {
-            try
-            {
-                NetworkIdentity netId = target.GetComponent<NetworkIdentity>();
-                target.transform.localScale = Vector3.one * scale;
-
-                ObjectDestroyMessage destroyMessage = new()
-                {
-                    netId = netId.netId
-                };
-
-                foreach (Player player in Player.GetPlayers())
-                {
-                    if (player.GameObject == target)
+                    if (player.GameObject == go)
                         continue;
-
                     NetworkConnection connection = player.Connection;
                     connection.Send(destroyMessage);
-
-                    typeof(NetworkServer).InvokeStaticMethod("SendSpawnMessage", new object[]
-                    {
-                        netId, connection
-                    });
+                    NetworkServer.SendSpawnMessage(identity, connection);
                 }
+
+                target.ReferenceHub.roleManager._sendNextFrame = true;
             }
             catch (Exception e)
             {
                 Log.Info($"Set Scale error: {e}");
             }
         }
+
+        public static void SetPlayerScale(Player target, float scale) => SetPlayerScale(target, Vector3.one * scale);
 
         public static IEnumerator<float> DoRocket(Player player, float speed)
         {
@@ -289,12 +258,11 @@ namespace AdminTools
                     Timing.CallDelayed(1, () => player.SetBadgeVisibility(true));
                 }
 
-                if (Plugin.RoundStartMutes.Count == 0 || player.ReferenceHub.serverRoles.RemoteAdmin ||
-                    Plugin.RoundStartMutes.Contains(player)) return;
+                if (Plugin.RoundStartMutes.Count == 0 || player.ReferenceHub.serverRoles.RemoteAdmin || !Plugin.RoundStartMutes.Add(player.UserId))
+                    return;
 
                 Log.Debug($"Muting {player.UserId} (no RA).");
                 player.Mute();
-                Plugin.RoundStartMutes.Add(player);
             }
             catch (Exception e)
             {
@@ -303,10 +271,12 @@ namespace AdminTools
         }
 
         [PluginEvent(ServerEventType.RoundStart)]
-        public void OnRoundStart()
+        public void OnRoundStart() => ClearRoundStartMutes();
+        
+        public static void ClearRoundStartMutes()
         {
-            foreach (Player ply in Plugin.RoundStartMutes.Where(ply => ply != null))
-                ply.Unmute(true);
+            foreach (Player p in Plugin.RoundStartMutes.Select(Player.Get))
+                p?.Unmute(true);
 
             Plugin.RoundStartMutes.Clear();
         }
@@ -350,10 +320,6 @@ namespace AdminTools
                 Log.Error($"Round End: {e}");
             }
 
-            if (!Plugin.RestartOnEnd)
-                return;
-            Log.Info("Restarting server....");
-            Round.Restart(false, true);
         }
 
         [PluginEvent(ServerEventType.PlayerInteractDoor)]

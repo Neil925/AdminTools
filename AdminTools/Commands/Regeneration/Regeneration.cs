@@ -32,12 +32,11 @@ namespace AdminTools.Commands.Regeneration
             if (arguments.Count >= 1)
                 return arguments.At(0).ToLower() switch
                 {
-                    "clear" => HandleClear(out response),
-                    "list" => HandleList(arguments, out response),
-                    "heal" => HandleHeal(arguments, out response),
-                    "time" => HandleTime(arguments, out response),
-                    "*" => HandleAll(arguments, out response),
-                    "all" => HandleAll(arguments, out response),
+                    "clear" => Clear(out response),
+                    "list" => List(arguments, out response),
+                    "heal" => Heal(arguments, out response),
+                    "time" => Time(arguments, out response),
+                    "*" or "all" => All(arguments, out response),
                     _ => HandleDefault(arguments, out response)
                 };
             response = "Usage:\nreg ((player id / name) or (all / *)) ((doors) or (all))" +
@@ -48,7 +47,7 @@ namespace AdminTools.Commands.Regeneration
             return false;
 
         }
-        private static bool HandleClear(out string response)
+        private static bool Clear(out string response)
         {
             foreach (AtPlayer ply in Extensions.Players)
                 ply.RegenerationEnabled = false;
@@ -56,7 +55,7 @@ namespace AdminTools.Commands.Regeneration
             response = "Regeneration has been removed from everyone";
             return true;
         }
-        private static bool HandleList(ArraySegment<string> arguments, out string response)
+        private static bool List(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 1)
             {
@@ -75,7 +74,7 @@ namespace AdminTools.Commands.Regeneration
             response = StringBuilderPool.Shared.ToStringReturn(playerLister);
             return true;
         }
-        private static bool HandleHeal(ArraySegment<string> arguments, out string response)
+        private static bool Heal(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 2)
             {
@@ -93,7 +92,7 @@ namespace AdminTools.Commands.Regeneration
             response = $"Players with regeneration will heal {heal} HP per interval";
             return true;
         }
-        private static bool HandleTime(ArraySegment<string> arguments, out string response)
+        private static bool Time(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 2)
             {
@@ -131,7 +130,7 @@ namespace AdminTools.Commands.Regeneration
             response = pl.RegenerationEnabled ? $"Regeneration is on for {pl.Nickname}" : $"Regeneration is off for {pl.Nickname}";
             return true;
         }
-        private static bool HandleAll(ArraySegment<string> arguments, out string response)
+        private static bool All(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 1)
             {

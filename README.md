@@ -16,11 +16,17 @@ Sets a user or users Artificial HP to a specified value
 
 Permissions: **PlayerPermissions.PlayersManagement**
 
-### ball [Work In Progress!]
+### ball
 
 Spawns a bouncy ball (SCP-018) on a user or all users
 
 Permissions: **PlayerPermissions.GivingItems**
+
+### breakdoors (a.k.a. bd)
+
+Manage break doors properties for users
+
+Permissions: **PlayerPermissions.ForceclassWithoutRestrictions**
 
 ### clear
 
@@ -112,7 +118,7 @@ Gives the ability to pry gates to players, clear the ability from players, and s
 
 Permissions: **PlayerPermissions.FacilityManagement**
 
-### randomtp [Work In Progress!]
+### randomtp
 
 Randomly teleports a user or all users to a random room in the facility
 

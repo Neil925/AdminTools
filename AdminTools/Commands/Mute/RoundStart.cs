@@ -33,14 +33,15 @@ namespace AdminTools.Commands.Mute
                 return false;
             }
 
-            foreach (Player player in Player.GetPlayers().Where(player => !player.IsMuted && !player.ReferenceHub.serverRoles.RemoteAdmin))
+            foreach (Player player in Player.GetPlayers().Where(MuteApplicable))
             {
                 player.Mute();
-                Plugin.RoundStartMutes.Add(player);
+                Plugin.RoundStartMutes.Add(player.UserId);
             }
 
             response = "All non-staff players have been muted until the round starts.";
             return true;
         }
+        private static bool MuteApplicable(Player player) => !player.IsMuted && !player.ReferenceHub.serverRoles.RemoteAdmin;
     }
 }

@@ -3,7 +3,6 @@ using MEC;
 using PlayerRoles;
 using PluginAPI.Core;
 using System;
-using System.Linq;
 
 namespace AdminTools.Commands.Rocket
 {
@@ -15,7 +14,8 @@ namespace AdminTools.Commands.Rocket
 
         public override string Command => "rocket";
 
-        public override string[] Aliases { get; } = { };
+        public override string[] Aliases { get; } =
+            { };
 
         public override string Description => "Sends players high in the sky and explodes them";
 
@@ -29,51 +29,54 @@ namespace AdminTools.Commands.Rocket
                 return false;
             }
 
-            if (arguments.Count < 2)
+            if (arguments.Count >= 2)
+                return arguments.At(0) switch
+                {
+                    "all" => All(arguments, out response),
+                    _ => HandleDefault(arguments, out response)
+                };
+            response = "Usage: rocket ((player id / name) or (all / *)) (speed)";
+            return false;
+
+        }
+        private static bool HandleDefault(ArraySegment<string> arguments, out string response)
+        {
+            Player p = Extensions.GetPlayer(arguments.At(0));
+
+            if (p == null)
             {
-                response = "Usage: rocket ((player id / name) or (all / *)) (speed)";
+                response = $"Player not found: {arguments.At(0)}";
+                return false;
+            }
+            if (p.Role is RoleTypeId.Spectator or RoleTypeId.None)
+            {
+                response = $"Player {p.Nickname} is not a valid class to rocket";
                 return false;
             }
 
-            switch (arguments.At(0))
+            if (!float.TryParse(arguments.At(1), out float spd) && spd <= 0)
             {
-                case "*":
-                case "all":
-                    if (!float.TryParse(arguments.At(1), out float speed) && speed <= 0)
-                    {
-                        response = $"Speed argument invalid: {arguments.At(1)}";
-                        return false;
-                    }
-
-                    foreach (Player ply in Player.GetPlayers())
-                        Timing.RunCoroutine(EventHandlers.DoRocket(ply, speed));
-
-                    response = "Everyone has been rocketed into the sky (We're going on a trip, in our favorite rocketship)";
-                    return true;
-                default:
-                    Player pl = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-
-                    if (pl == null)
-                    {
-                        response = $"Player not found: {arguments.At(0)}";
-                        return false;
-                    }
-                    if (pl.Role is RoleTypeId.Spectator or RoleTypeId.None)
-                    {
-                        response = $"Player {pl.Nickname} is not a valid class to rocket";
-                        return false;
-                    }
-
-                    if (!float.TryParse(arguments.At(1), out float spd) && spd <= 0)
-                    {
-                        response = $"Speed argument invalid: {arguments.At(1)}";
-                        return false;
-                    }
-
-                    Timing.RunCoroutine(EventHandlers.DoRocket(pl, spd));
-                    response = $"Player {pl.Nickname} has been rocketed into the sky (We're going on a trip, in our favorite rocketship)";
-                    return true;
+                response = $"Speed argument invalid: {arguments.At(1)}";
+                return false;
             }
+
+            Timing.RunCoroutine(EventHandlers.DoRocket(p, spd));
+            response = $"Player {p.Nickname} has been rocketed into the sky (We're going on a trip, in our favorite rocketship)";
+            return true;
+        }
+        private static bool All(ArraySegment<string> arguments, out string response)
+        {
+            if (!float.TryParse(arguments.At(1), out float speed) && speed <= 0)
+            {
+                response = $"Speed argument invalid: {arguments.At(1)}";
+                return false;
+            }
+
+            foreach (Player ply in Player.GetPlayers())
+                Timing.RunCoroutine(EventHandlers.DoRocket(ply, speed));
+
+            response = "Everyone has been rocketed into the sky (We're going on a trip, in our favorite rocketship)";
+            return true;
         }
     }
 }

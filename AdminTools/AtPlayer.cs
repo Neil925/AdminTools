@@ -18,8 +18,6 @@ namespace AdminTools
 
         public bool InstantKillEnabled { get; set; }
 
-        public bool IsRoundStartMuted { get; set; }
-
         public bool RegenerationEnabled { get; set; }
 
         private float _regenTime;

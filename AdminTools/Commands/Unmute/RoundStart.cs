@@ -1,5 +1,4 @@
 ﻿using CommandSystem;
-using PluginAPI.Core;
 using System;
 
 namespace AdminTools.Commands.Unmute
@@ -8,7 +7,10 @@ namespace AdminTools.Commands.Unmute
     {
         public string Command => "roundstart";
 
-        public string[] Aliases { get; } = { "rs" };
+        public string[] Aliases { get; } =
+        {
+            "rs"
+        };
 
         public string Description => "Unmutes everyone from speaking until the round starts.";
 
@@ -20,18 +22,7 @@ namespace AdminTools.Commands.Unmute
                 return false;
             }
 
-            if (arguments.Count < 0)
-            {
-                response = "Usage: pumute roundstart";
-                return false;
-            }
-
-            foreach (Player player in Plugin.RoundStartMutes)
-            {
-                player.Unmute(true);
-            }
-            Plugin.RoundStartMutes.Clear();
-
+            EventHandlers.ClearRoundStartMutes();
             response = "All non-staff players that were muted until round start have been unmuted.";
             return true;
         }
