@@ -92,12 +92,12 @@ namespace AdminTools
         }
 
         [PluginEvent(ServerEventType.PlayerLeft)]
-        public void OnPlayerDestroyed(Player player, Player attacker, DamageHandlerBase damageHandler)
+        public void OnPlayerDestroyed(AtPlayer player)
         {
-            if (!Plugin.RoundStartMutes.Contains(player))
+            if (player.IsRoundStartMuted)
                 return;
             player.Unmute(true);
-            Plugin.RoundStartMutes.Remove(player);
+            player.IsRoundStartMuted = false;
         }
 
         public static void SpawnWorkbench(Player ply, Vector3 position, Vector3 rotation, Vector3 size, out int benchIndex)
@@ -152,7 +152,10 @@ namespace AdminTools
                     if (player.GameObject != target)
                         playerCon.Send(destroyMessage);
 
-                    object[] parameters = { identity, playerCon };
+                    object[] parameters =
+                    {
+                        identity, playerCon
+                    };
                     typeof(NetworkServer).InvokeStaticMethod("SendSpawnMessage", parameters);
                 }
             }
@@ -166,12 +169,12 @@ namespace AdminTools
         {
             try
             {
-                NetworkIdentity identity = target.GetComponent<NetworkIdentity>();
+                NetworkIdentity netId = target.GetComponent<NetworkIdentity>();
                 target.transform.localScale = Vector3.one * scale;
 
                 ObjectDestroyMessage destroyMessage = new()
                 {
-                    netId = identity.netId
+                    netId = netId.netId
                 };
 
                 foreach (Player player in Player.GetPlayers())
@@ -182,8 +185,10 @@ namespace AdminTools
                     NetworkConnection connection = player.Connection;
                     connection.Send(destroyMessage);
 
-                    object[] parameters = { identity, connection };
-                    typeof(NetworkServer).InvokeStaticMethod("SendSpawnMessage", parameters);
+                    typeof(NetworkServer).InvokeStaticMethod("SendSpawnMessage", new object[]
+                    {
+                        netId, connection
+                    });
                 }
             }
             catch (Exception e)
@@ -281,7 +286,7 @@ namespace AdminTools
                 if (File.ReadAllText(Plugin.HiddenTagsFilePath).Contains(player.UserId))
                 {
                     Log.Debug($"Hiding {player.UserId}'s tag.");
-                    Timing.CallDelayed(1, () => player.SetBadgeHidden(true));
+                    Timing.CallDelayed(1, () => player.SetBadgeVisibility(true));
                 }
 
                 if (Plugin.RoundStartMutes.Count == 0 || player.ReferenceHub.serverRoles.RemoteAdmin ||

@@ -72,6 +72,7 @@ namespace AdminTools
         // 	ccm.GetComponent<CapsuleCollider>().enabled = (role.team != Team.RIP);
         // }
         public static List<AtPlayer> Players => Player.GetPlayers<AtPlayer>();
-        public static AtPlayer GetPlayer(string arg) => int.TryParse(arg, out int id) ? Extensions.Players.FirstOrDefault(x => x.PlayerId == id) : Player.GetByName<AtPlayer>(arg);
+        
+        public static AtPlayer GetPlayer(string arg) => int.TryParse(arg, out int id) ? Players.FirstOrDefault(x => x.PlayerId == id) : Player.GetByName<AtPlayer>(arg);
     }
 }

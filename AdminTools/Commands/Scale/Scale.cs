@@ -13,7 +13,8 @@ namespace AdminTools.Commands.Scale
 
         public override string Command => "scale";
 
-        public override string[] Aliases { get; } = { };
+        public override string[] Aliases { get; } =
+            { };
 
         public override string Description => "Scales all users or a user by a specified value";
 
@@ -37,16 +38,18 @@ namespace AdminTools.Commands.Scale
             switch (arguments.At(0))
             {
                 case "reset":
+                {
                     if (arguments.Count < 1)
                     {
                         response = "Usage: scale reset";
                         return false;
                     }
-                    foreach (Player plyr in Player.GetPlayers())
-                        EventHandlers.SetPlayerScale(plyr.GameObject, 1);
+                    foreach (Player p in Player.GetPlayers())
+                        EventHandlers.SetPlayerScale(p.GameObject, 1);
 
                     response = "Everyone's scale has been reset";
                     return true;
+                }
                 case "*":
                 case "all":
                     if (arguments.Count < 2)
@@ -61,20 +64,21 @@ namespace AdminTools.Commands.Scale
                         return false;
                     }
 
-                    foreach (Player ply in Player.GetPlayers())
-                        EventHandlers.SetPlayerScale(ply.GameObject, value);
+                    foreach (Player p in Player.GetPlayers())
+                        EventHandlers.SetPlayerScale(p.GameObject, value);
 
                     response = $"Everyone's scale has been set to {value}";
                     return true;
                 default:
+                {
                     if (arguments.Count < 2)
                     {
                         response = "Usage: scale (player id / name) (value)";
                         return false;
                     }
 
-                    Player pl = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (pl == null)
+                    Player p = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
+                    if (p == null)
                     {
                         response = $"Player not found: {arguments.At(0)}";
                         return true;
@@ -86,9 +90,10 @@ namespace AdminTools.Commands.Scale
                         return false;
                     }
 
-                    EventHandlers.SetPlayerScale(pl.GameObject, val);
-                    response = $"Player {pl.Nickname}'s scale has been set to {val}";
+                    EventHandlers.SetPlayerScale(p.GameObject, val);
+                    response = $"Player {p.Nickname}'s scale has been set to {val}";
                     return true;
+                }
             }
         }
     }

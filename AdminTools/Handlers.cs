@@ -35,47 +35,100 @@ namespace AdminTools
         private const int Scp018TypeID = 38;
         private const int DisruptorTypeID = 46;
 
-        private static readonly Dictionary<string, int> FirearmDamageTypeIDs = new()
+        private static readonly Dictionary<ItemType, int> FirearmDamageTypeIDs = new()
         {
-            { "GunCOM15", 12 },
-            { "GunE11SR", 14 },
-            { "GunLogicer", 16 },
-            { "GunCOM18", 32 },
-            { "GunAK", 33 },
-            { "GunShotgun", 34 },
-            { "GunCrossvec", 35 },
-            { "GunFSP9", 36 },
-            { "MicroHID", 18 },
-            { "GunRevolver", 31 },
-            { "MolecularDisruptor", 45 },
-            { "GunCom45", 50 }
+            {
+                ItemType.GunCOM15, 12
+            },
+            {
+                ItemType.GunE11SR, 14
+            },
+            {
+                ItemType.GunLogicer, 16
+            },
+            {
+                ItemType.GunCOM18, 32
+            },
+            {
+                ItemType.GunAK, 33
+            },
+            {
+                ItemType.GunShotgun, 34
+            },
+            {
+                ItemType.GunCrossvec, 35
+            },
+            {
+                ItemType.GunFSP9, 36
+            },
+            {
+                ItemType.MicroHID, 18
+            },
+            {
+                ItemType.GunRevolver, 31
+            },
+            {
+                ItemType.ParticleDisruptor, 45
+            },
+            {
+                ItemType.GunCom45, 50
+            }
         };
 
         public static readonly Dictionary<DeathTranslation, int> UniversalDamageTypeIDs = new();
 
-        private static readonly Dictionary<string, int> RoleDamageTypeIDs = new()
+        private static readonly Dictionary<RoleTypeId, int> RoleDamageTypeIDs = new()
         {
-            { "Scp173", 24 },
-            { "Scp106", 23 },
-            { "Scp049", 20 },
-            { "Scp096", 22 },
-            { "Scp0492", 21 },
-            { "Scp939", 25 }
+            {
+                RoleTypeId.Scp173, 24
+            },
+            {
+                RoleTypeId.Scp106, 23
+            },
+            {
+                RoleTypeId.Scp049, 20
+            },
+            {
+                RoleTypeId.Scp096, 22
+            },
+            {
+                RoleTypeId.Scp0492, 21
+            },
+            {
+                RoleTypeId.Scp939, 25
+            }
         };
 
-        private static readonly Dictionary<string, int> Scp096DamageTypeIDs = new()
+        private static readonly Dictionary<Scp096DamageHandler.AttackType, int> Scp096DamageTypeIDs = new()
         {
-            { "GateKill", 40 },
-            { "Slap", 22 },
-            { "Charge", 39 }
+            {
+                Scp096DamageHandler.AttackType.GateKill, 40
+            },
+            {
+                Scp096DamageHandler.AttackType.SlapLeft, 22
+            },
+            {
+                Scp096DamageHandler.AttackType.SlapRight, 22
+            },
+            {
+                Scp096DamageHandler.AttackType.Charge, 39
+            }
         };
 
-        private static readonly Dictionary<string, int> Scp939DamageTypeIDs = new()
+        private static readonly Dictionary<Scp939DamageType, int> Scp939DamageTypeIDs = new()
         {
-            { "None", 46 },
-            { "Claw", 47 },
-            { "LungeTarget", 48 },
-            { "LungeSecondary", 49 }
+            {
+                Scp939DamageType.None, 46
+            },
+            {
+                Scp939DamageType.Claw, 47
+            },
+            {
+                Scp939DamageType.LungeTarget, 48
+            },
+            {
+                Scp939DamageType.LungeSecondary, 49
+            }
         };
 
         public static bool IsWeapon(this ItemBase item) =>
@@ -105,7 +158,7 @@ namespace AdminTools
                     return DisruptorTypeID;
                 case FirearmDamageHandler firearmDamageHandler:
                 {
-                    string id = firearmDamageHandler.WeaponType.ToString();
+                    ItemType id = firearmDamageHandler.WeaponType;
 
                     return FirearmDamageTypeIDs.TryGetValue(id, out int output) ? output : -1;
                 }
@@ -118,19 +171,19 @@ namespace AdminTools
                 }
                 case ScpDamageHandler scpDamageHandler:
                 {
-                    string id = scpDamageHandler.Attacker.Role.ToString();
+                    RoleTypeId id = scpDamageHandler.Attacker.Role;
 
                     return RoleDamageTypeIDs.TryGetValue(id, out int output) ? output : -1;
                 }
                 case Scp096DamageHandler scp096DamageHandler:
                 {
-                    string id = scp096DamageHandler._attackType.ToString();
+                    Scp096DamageHandler.AttackType id = scp096DamageHandler._attackType;
 
                     return Scp096DamageTypeIDs.TryGetValue(id, out int output) ? output : -1;
                 }
                 case Scp939DamageHandler scp939DamageHandler:
                 {
-                    string id = scp939DamageHandler._damageType.ToString();
+                    Scp939DamageType id = scp939DamageHandler._damageType;
 
                     return Scp939DamageTypeIDs.TryGetValue(id, out int output) ? output : -1;
                 }
@@ -139,22 +192,21 @@ namespace AdminTools
             }
         }
 
-        public static float Amount(this DamageHandlerBase damageHandler) =>
-            damageHandler switch
-            {
-                RecontainmentDamageHandler handler => handler.Damage,
-                MicroHidDamageHandler handler => handler.Damage,
-                ExplosionDamageHandler handler => handler.Damage,
-                WarheadDamageHandler handler => handler.Damage,
-                Scp018DamageHandler handler => handler.Damage,
-                DisruptorDamageHandler handler => handler.Damage,
-                FirearmDamageHandler firearmDamageHandler => firearmDamageHandler.Damage,
-                UniversalDamageHandler universalDamageHandler => universalDamageHandler.Damage,
-                ScpDamageHandler scpDamageHandler => scpDamageHandler.Damage,
-                Scp096DamageHandler scp096DamageHandler => scp096DamageHandler.Damage,
-                Scp939DamageHandler scp939DamageHandler => scp939DamageHandler.Damage,
-                _ => -1
-            };
+        public static float Amount(this DamageHandlerBase damageHandler) => damageHandler switch
+        {
+            RecontainmentDamageHandler handler => handler.Damage,
+            MicroHidDamageHandler handler => handler.Damage,
+            ExplosionDamageHandler handler => handler.Damage,
+            WarheadDamageHandler handler => handler.Damage,
+            Scp018DamageHandler handler => handler.Damage,
+            DisruptorDamageHandler handler => handler.Damage,
+            FirearmDamageHandler firearmDamageHandler => firearmDamageHandler.Damage,
+            UniversalDamageHandler universalDamageHandler => universalDamageHandler.Damage,
+            ScpDamageHandler scpDamageHandler => scpDamageHandler.Damage,
+            Scp096DamageHandler scp096DamageHandler => scp096DamageHandler.Damage,
+            Scp939DamageHandler scp939DamageHandler => scp939DamageHandler.Damage,
+            _ => -1
+        };
 
         public static void SetAmount(this DamageHandlerBase damageHandler, float amount)
         {
@@ -196,36 +248,26 @@ namespace AdminTools
             }
         }
 
-        public static string DamageType(this int id)
+        public static string DamageType(this int id) => id switch
         {
-            switch (id)
-            {
-                case RecontainmentDamageTypeID:
-                    return "Recontainment";
-                case WarheadDamageTypeID:
-                    return "Warhead";
-                case MicroHidTypeID:
-                    return "Micro";
-                case GrenadeTypeID:
-                    return "Grenade";
-                case Scp018TypeID:
-                    return "Balls";
-                case DisruptorTypeID:
-                    return "Disruptor";
-                default:
-                    if (FirearmDamageTypeIDs.ContainsValue(id))
-                        return FirearmDamageTypeIDs.First(p => p.Value == id).Key;
-                    if (UniversalDamageTypeIDs.ContainsValue(id))
-                        return UniversalDamageTypeIDs.First(p => p.Value == id).Key.ToString();
-                    if (RoleDamageTypeIDs.ContainsValue(id))
-                        return RoleDamageTypeIDs.First(p => p.Value == id).Key;
-                    if (Scp096DamageTypeIDs.ContainsValue(id))
-                        return Scp096DamageTypeIDs.First(p => p.Value == id).Key;
-                    return Scp939DamageTypeIDs.ContainsValue(id)
-                        ? Scp939DamageTypeIDs.First(p => p.Value == id).Key
-                        : "Unknown";
-            }
-        }
+            RecontainmentDamageTypeID => "Recontainment",
+            WarheadDamageTypeID => "Warhead",
+            MicroHidTypeID => "Micro",
+            GrenadeTypeID => "Grenade",
+            Scp018TypeID => "Balls",
+            DisruptorTypeID => "Disruptor",
+            _ => FirearmDamageTypeIDs.ContainsValue(id)
+                ? FirearmDamageTypeIDs.First(p => p.Value == id).Key.ToString()
+                : UniversalDamageTypeIDs.ContainsValue(id)
+                    ? UniversalDamageTypeIDs.First(p => p.Value == id).Key.ToString()
+                    : RoleDamageTypeIDs.ContainsValue(id)
+                        ? RoleDamageTypeIDs.First(p => p.Value == id).Key.ToString()
+                        : Scp096DamageTypeIDs.ContainsValue(id)
+                            ? Scp096DamageTypeIDs.First(p => p.Value == id).Key.ToString()
+                            : Scp939DamageTypeIDs.ContainsValue(id)
+                                ? Scp939DamageTypeIDs.First(p => p.Value == id).Key.ToString()
+                                : "Unknown"
+        };
 
         public static Team Team(this Player player) => player.ReferenceHub.GetTeam();
 
@@ -238,10 +280,8 @@ namespace AdminTools
             _ => Enums.Side.None
         };
 
-        public static void
-            RemoteAdminMessage(this Player player, string message, bool success = true, string pluginName = null) =>
-            player.ReferenceHub.queryProcessor._sender.RaReply(
-                (pluginName ?? Assembly.GetCallingAssembly().GetName().Name) + "#" + message, success, true, string.Empty);
+        public static void RemoteAdminMessage(this Player player, string message, bool success = true, string pluginName = null) =>
+            player.ReferenceHub.queryProcessor._sender.RaReply((pluginName ?? Assembly.GetCallingAssembly().GetName().Name) + "#" + message, success, true, string.Empty);
 
         public static UserGroup GetGroup(this Player player) => player.ReferenceHub.serverRoles.Group;
 
@@ -259,7 +299,7 @@ namespace AdminTools
         public static bool IsBadgeHidden(this Player player) =>
             !string.IsNullOrEmpty(player.ReferenceHub.serverRoles.HiddenBadge);
 
-        public static void SetBadgeHidden(this Player player, bool state)
+        public static void SetBadgeVisibility(this Player player, bool state)
         {
             if (state)
                 player.ReferenceHub.characterClassManager.UserCode_CmdRequestHideTag();
@@ -268,7 +308,7 @@ namespace AdminTools
 
         }
 
-        public static Scp914KnobSetting GetNobSetting() => Scp914Controller.Singleton.Network_knobSetting;
+        public static Scp914KnobSetting GetKnobSetting() => Scp914Controller.Singleton.Network_knobSetting;
 
         public static Scp914KnobSetting SetNobSetting(Scp914KnobSetting state) =>
             Scp914Controller.Singleton.Network_knobSetting = state;
@@ -284,7 +324,8 @@ namespace AdminTools
             Player owner = null)
         {
             ExplosionGrenade grenade = (ExplosionGrenade)Object.Instantiate(item.Projectile, position, Quaternion.identity);
-            grenade._fuseTime = fuseTime < 0 ? ((ExplosionGrenade)item.Projectile)._fuseTime : fuseTime;
+            if (fuseTime < 0)
+                grenade._fuseTime = ((ExplosionGrenade)item.Projectile)._fuseTime;
             grenade.PreviousOwner = new Footprint(owner is not null ? owner.ReferenceHub : ReferenceHub._hostHub);
             NetworkServer.Spawn(grenade.gameObject);
             grenade.ServerActivate();
@@ -293,15 +334,8 @@ namespace AdminTools
         public static Dictionary<AmmoType, ushort> Ammo(this Player player) => Enum.GetValues(typeof(ItemType))
             .Cast<ItemType>().Where(x => x.IsAmmo()).ToDictionary(itemType => itemType.GetAmmoType(), player.GetAmmo);
 
-        public static bool IsAmmo(this ItemType item) => item switch
-        {
-            ItemType.Ammo9x19 => true,
-            ItemType.Ammo12gauge => true,
-            ItemType.Ammo44cal => true,
-            ItemType.Ammo556x45 => true,
-            ItemType.Ammo762x39 => true,
-            _ => false
-        };
+        public static bool IsAmmo(this ItemType item) =>
+            item is ItemType.Ammo9x19 or ItemType.Ammo12gauge or ItemType.Ammo44cal or ItemType.Ammo556x45 or ItemType.Ammo762x39;
 
         public static AmmoType GetAmmoType(this ItemType item) => item switch
         {

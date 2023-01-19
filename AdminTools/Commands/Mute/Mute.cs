@@ -18,7 +18,7 @@ namespace AdminTools.Commands.Mute
         public override void LoadGeneratedCommands()
         {
             RegisterCommand(new All());
-            RegisterCommand(new Com());
+            RegisterCommand(new IntercomMute());
             RegisterCommand(new RoundStart());
         }
 

@@ -4,22 +4,22 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace AdminTools.Commands.InstantKill
+namespace AdminTools.Commands.BreakDoors
 {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     [CommandHandler(typeof(GameConsoleCommandHandler))]
-    public sealed class InstantKill : ParentCommand
+    public sealed class BreakDoors : ParentCommand
     {
-        public InstantKill() => LoadGeneratedCommands();
+        public BreakDoors() => LoadGeneratedCommands();
 
-        public override string Command => "instakill";
+        public override string Command => "breakdoors";
 
         public override string[] Aliases { get; } =
         {
-            "ik"
+            "bd"
         };
 
-        public override string Description => "Manage instant kill properties for users";
+        public override string Description => "Manage break door properties for users";
 
         public override void LoadGeneratedCommands() { }
 
@@ -41,10 +41,11 @@ namespace AdminTools.Commands.InstantKill
                     "all" => HandleAll(arguments, out response),
                     _ => HandleDefault(arguments, out response)
                 };
-            response = "Usage:\ninstakill ((player id / name) or (all / *))" +
-                "\ninstakill clear" +
-                "\ninstakill list" +
-                "\ninstakill remove (player id / name)";
+            
+            response = "Usage:\nbreakdoors ((player id / name) or (all / *))" +
+                "\nbreakdoors clear" +
+                "\nbreakdoors list" +
+                "\nbreakdoors remove (player id / name)";
             return false;
 
         }
@@ -52,7 +53,7 @@ namespace AdminTools.Commands.InstantKill
         {
             if (arguments.Count < 1)
             {
-                response = "Usage: instakill (player id / name)";
+                response = "Usage: breakdoors (player id / name)";
                 return false;
             }
 
@@ -63,20 +64,20 @@ namespace AdminTools.Commands.InstantKill
                 return false;
             }
 
-            p.InstantKillEnabled = !p.InstantKillEnabled;
-            response = $"Instant killing is now {(p.InstantKillEnabled ? "on" : "off")} for {p.Nickname}";
+            p.BreakDoorsEnabled = !p.BreakDoorsEnabled;
+            response = $"Break doors is now {(p.BreakDoorsEnabled ? "on" : "off")} for {p.Nickname}";
             return true;
         }
         private static bool HandleAll(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 1)
             {
-                response = "Usage: instakill all / *";
+                response = "Usage: breakdoors all / *";
                 return false;
             }
 
-            foreach (AtPlayer ply in Extensions.Players.Where(ply => !ply.InstantKillEnabled))
-                ply.InstantKillEnabled = true;
+            foreach (AtPlayer ply in Extensions.Players.Where(ply => !ply.BreakDoorsEnabled))
+                ply.BreakDoorsEnabled = true;
 
             response = "Everyone on the server can instantly kill other users now";
             return true;
@@ -85,7 +86,7 @@ namespace AdminTools.Commands.InstantKill
         {
             if (arguments.Count < 2)
             {
-                response = "Usage: instakill remove (player id / name)";
+                response = "Usage: breakdoors remove (player id / name)";
                 return false;
             }
 
@@ -96,19 +97,19 @@ namespace AdminTools.Commands.InstantKill
                 return false;
             }
 
-            if (p.InstantKillEnabled)
+            if (p.BreakDoorsEnabled)
             {
-                p.InstantKillEnabled = false;
-                response = $"Instant killing turned off for {p.Nickname}";
+                p.BreakDoorsEnabled = false;
+                response = $"Break doors turned off for {p.Nickname}";
             }
             else
-                response = $"Player {p.Nickname} does not have the ability to instantly kill others";
+                response = $"Player {p.Nickname} does not have the ability to break doors";
             return true;
         }
         private static bool HandleList(out string response)
         {
-            AtPlayer[] list = Extensions.Players.Where(p => p.InstantKillEnabled).ToArray();
-            StringBuilder playerLister = StringBuilderPool.Shared.Rent(list.Length != 0 ? "Players with instant killing on:\n" : "No players currently online have instant killing on");
+            AtPlayer[] list = Extensions.Players.Where(p => p.BreakDoorsEnabled).ToArray();
+            StringBuilder playerLister = StringBuilderPool.Shared.Rent(list.Length != 0 ? "Players with break doors on:\n" : "No players currently online have break doors on");
             if (list.Length == 0)
             {
                 response = playerLister.ToString();
@@ -123,14 +124,14 @@ namespace AdminTools.Commands.InstantKill
         {
             if (arguments.Count < 1)
             {
-                response = "Usage: instakill clear";
+                response = "Usage: breakdoors clear";
                 return false;
             }
 
             foreach (AtPlayer ply in Extensions.Players)
-                ply.InstantKillEnabled = false;
+                ply.BreakDoorsEnabled = false;
 
-            response = "Instant killing has been removed from everyone";
+            response = "Door breaking has been removed from everyone";
             return true;
         }
 

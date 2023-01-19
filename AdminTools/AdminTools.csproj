@@ -96,6 +96,7 @@
         <Compile Include="Commands\AdminBroadcast\AdminBroadcast.cs" />
         <Compile Include="Commands\Ahp\Ahp.cs" />
         <Compile Include="Commands\Ball\Ball.cs" />
+        <Compile Include="Commands\BreakDoors\BreakDoors.cs" />
         <Compile Include="Commands\Clear\Clear.cs" />
         <Compile Include="Commands\Clear\Items.cs" />
         <Compile Include="Commands\Clear\Ragdolls.cs" />
@@ -114,7 +115,7 @@
         <Compile Include="Commands\Jail\Jail.cs" />
         <Compile Include="Commands\Kill\Kill.cs" />
         <Compile Include="Commands\Mute\All.cs" />
-        <Compile Include="Commands\Mute\ICom.cs" />
+        <Compile Include="Commands\Mute\IntercomMute.cs" />
         <Compile Include="Commands\Mute\Mute.cs" />
         <Compile Include="Commands\Mute\RoundStart.cs" />
         <Compile Include="Commands\Position\Position.cs" />

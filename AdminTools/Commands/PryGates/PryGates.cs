@@ -1,9 +1,9 @@
 ﻿using CommandSystem;
 using NorthwoodLib.Pools;
-using PluginAPI.Core;
 using System;
 using System.Linq;
 using System.Text;
+using Utils.NonAllocLINQ;
 
 namespace AdminTools.Commands.PryGates
 {
@@ -15,7 +15,8 @@ namespace AdminTools.Commands.PryGates
 
         public override string Command => "prygate";
 
-        public override string[] Aliases { get; } = { };
+        public override string[] Aliases { get; } =
+            { };
 
         public override string Description => "Gives the ability to pry gates to players, clear the ability from players, and shows who has the ability";
 
@@ -29,112 +30,121 @@ namespace AdminTools.Commands.PryGates
                 return false;
             }
 
+            if (arguments.Count >= 1)
+                return arguments.At(0).ToLower() switch
+                {
+                    "clear" => Clear(arguments, out response),
+                    "list" => List(arguments, out response),
+                    "remove" => Remove(arguments, out response),
+                    "*" or "all" => All(arguments, out response),
+                    _ => FallbackCase(arguments, out response)
+                };
+
+            response = "Usage:\nprygate ((player id / name) or (all / *))" +
+                "\nprygate clear" +
+                "\nprygate list" +
+                "\nprygate remove (player id / name)";
+            return false;
+
+        }
+        private static bool FallbackCase(ArraySegment<string> arguments, out string response)
+        {
             if (arguments.Count < 1)
             {
-                response = "Usage:\nprygate ((player id / name) or (all / *))" +
-                    "\nprygate clear" +
-                    "\nprygate list" +
-                    "\nprygate remove (player id / name)";
+                response = "Usage: prygate (player id / name)";
                 return false;
             }
 
-            int id;
-
-            switch (arguments.At(0))
+            AtPlayer p = Extensions.GetPlayer(arguments.At(0));
+            if (p == null)
             {
-                case "clear":
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: prygates clear";
-                        return false;
-                    }
-
-                    Plugin.PryGateHubs.Clear();
-                    response = "The ability to pry gates is cleared from all players now";
-                    return true;
-                case "list":
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: prygates list";
-                        return false;
-                    }
-
-                    StringBuilder playerLister = StringBuilderPool.Shared.Rent(Plugin.PryGateHubs.Count != 0 ? "Players with the ability to pry gates:\n" : "No players currently online have the ability to pry gates");
-                    if (Plugin.PryGateHubs.Count > 0)
-                    {
-                        foreach (Player ply in Plugin.PryGateHubs)
-                            playerLister.Append(ply.Nickname + ", ");
-
-                        int length = playerLister.ToString().Length;
-                        response = playerLister.ToString().Substring(0, length - 2);
-                        StringBuilderPool.Shared.Return(playerLister);
-                        return true;
-                    }
-                    response = playerLister.ToString();
-                    StringBuilderPool.Shared.Return(playerLister);
-                    return true;
-                case "remove":
-                    if (arguments.Count < 2)
-                    {
-                        response = "Usage: prygate remove (player id / name)";
-                        return false;
-                    }
-
-                    Player plyr = int.TryParse(arguments.At(1), out id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(1));
-                    if (plyr == null)
-                    {
-                        response = $"Player not found: {arguments.At(1)}";
-                        return false;
-                    }
-
-                    if (Plugin.PryGateHubs.Contains(plyr))
-                    {
-                        Plugin.PryGateHubs.Remove(plyr);
-                        response = $"Player \"{plyr.Nickname}\" cannot pry gates open now";
-                    }
-                    else
-                        response = $"Player {plyr.Nickname} does not have the ability to pry gates open";
-                    return true;
-                case "*":
-                case "all":
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: prygates (all / *)";
-                        return false;
-                    }
-
-                    foreach (Player ply in Player.GetPlayers())
-                    {
-                        Plugin.PryGateHubs.Add(ply);
-                    }
-
-                    response = "The ability to pry gates open is on for all players now";
-                    return true;
-                default:
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: prygate (player id / name)";
-                        return false;
-                    }
-
-                    Player pl = int.TryParse(arguments.At(0), out id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (pl == null)
-                    {
-                        response = $"Player \"{arguments.At(0)}\" not found";
-                        return false;
-                    }
-
-                    if (!Plugin.PryGateHubs.Contains(pl))
-                    {
-                        Plugin.PryGateHubs.Add(pl);
-                        response = $"Player \"{pl.Nickname}\" can now pry gates open";
-                        return true;
-                    }
-
-                    Plugin.PryGateHubs.Remove(pl);
-                    response = $"Player \"{pl.Nickname}\" cannot pry gates open now";
-                    return true;
+                response = $"Player \"{arguments.At(0)}\" not found";
+                return false;
             }
+
+            if (!p.PryGateEnabled)
+            {
+                p.PryGateEnabled = true;
+                response = $"Player \"{p.Nickname}\" can now pry gates open";
+                return true;
+            }
+
+            p.PryGateEnabled = false;
+            response = $"Player \"{p.Nickname}\" cannot pry gates open now";
+            return true;
+        }
+        private static bool All(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 1)
+            {
+                response = "Usage: prygates (all / *)";
+                return false;
+            }
+
+            ListExtensions.ForEach(Extensions.Players, p => p.PryGateEnabled = true);
+            response = "The ability to pry gates open is on for all players now";
+            return true;
+        }
+        private static bool Remove(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 2)
+            {
+                response = "Usage: prygate remove (player id / name)";
+                return false;
+            }
+
+            AtPlayer p = Extensions.GetPlayer(arguments.At(1));
+            if (p == null)
+            {
+                response = $"Player not found: {arguments.At(1)}";
+                return false;
+            }
+
+            if (p.PryGateEnabled)
+            {
+                p.PryGateEnabled = false;
+                response = $"Player \"{p.Nickname}\" cannot pry gates open now";
+            }
+            else
+                response = $"Player {p.Nickname} does not have the ability to pry gates open";
+            return true;
+        }
+        private static bool List(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 1)
+            {
+                response = "Usage: prygates list";
+                return false;
+            }
+
+            AtPlayer[] active = Extensions.Players.Where(p => p.PryGateEnabled).ToArray();
+
+            StringBuilder playerLister = StringBuilderPool.Shared.Rent(active.Length != 0 ? "Players with the ability to pry gates:\n" : "No players currently online have the ability to pry gates");
+            if (active.Length > 0)
+            {
+                foreach (AtPlayer p in active)
+                    playerLister.Append(p.Nickname + ", ");
+
+                int length = playerLister.ToString().Length;
+                response = playerLister.ToString().Substring(0, length - 2);
+                StringBuilderPool.Shared.Return(playerLister);
+                return true;
+            }
+            response = playerLister.ToString();
+            StringBuilderPool.Shared.Return(playerLister);
+            return true;
+        }
+        private static bool Clear(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 1)
+            {
+                response = "Usage: prygates clear";
+                return false;
+            }
+
+            ListExtensions.ForEach(Extensions.Players, p => p.PryGateEnabled = false);
+            response = "The ability to pry gates is cleared from all players now";
+            return true;
         }
     }
 }

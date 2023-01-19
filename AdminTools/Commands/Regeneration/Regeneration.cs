@@ -1,11 +1,8 @@
-﻿using AdminTools.Components;
-using CommandSystem;
+﻿using CommandSystem;
 using NorthwoodLib.Pools;
-using PluginAPI.Core;
 using System;
 using System.Linq;
 using System.Text;
-using Object = UnityEngine.Object;
 
 namespace AdminTools.Commands.Regeneration
 {
@@ -17,7 +14,8 @@ namespace AdminTools.Commands.Regeneration
 
         public override string Command => "reg";
 
-        public override string[] Aliases { get; } = { };
+        public override string[] Aliases { get; } =
+            { };
 
         public override string Description => "Manages regeneration properties for users";
 
@@ -31,127 +29,121 @@ namespace AdminTools.Commands.Regeneration
                 return false;
             }
 
+            if (arguments.Count >= 1)
+                return arguments.At(0).ToLower() switch
+                {
+                    "clear" => HandleClear(out response),
+                    "list" => HandleList(arguments, out response),
+                    "heal" => HandleHeal(arguments, out response),
+                    "time" => HandleTime(arguments, out response),
+                    "*" => HandleAll(arguments, out response),
+                    "all" => HandleAll(arguments, out response),
+                    _ => HandleDefault(arguments, out response)
+                };
+            response = "Usage:\nreg ((player id / name) or (all / *)) ((doors) or (all))" +
+                "\nreg clear" +
+                "\nreg list" +
+                "\nreg heal (value)" +
+                "\nreg time (value)";
+            return false;
+
+        }
+        private static bool HandleClear(out string response)
+        {
+            foreach (AtPlayer ply in Extensions.Players)
+                ply.RegenerationEnabled = false;
+
+            response = "Regeneration has been removed from everyone";
+            return true;
+        }
+        private static bool HandleList(ArraySegment<string> arguments, out string response)
+        {
             if (arguments.Count < 1)
             {
-                response = "Usage:\nreg ((player id / name) or (all / *)) ((doors) or (all))" +
-                    "\nreg clear" +
-                    "\nreg list" +
-                    "\nreg health (value)" +
-                    "\nreg time (value)";
+                response = "Usage: regen list";
+                return false;
+            }
+            AtPlayer[] list = Extensions.Players.Where(p => p.RegenerationEnabled).ToArray();
+            StringBuilder playerLister = StringBuilderPool.Shared.Rent(list.Length != 0 ? "Players with regeneration on:\n" : "No players currently online have regeneration on");
+            if (list.Length == 0)
+            {
+                response = playerLister.ToString();
+                return true;
+            }
+
+            playerLister.Append(string.Join(", ", list.Select(p => p.Nickname)));
+            response = StringBuilderPool.Shared.ToStringReturn(playerLister);
+            return true;
+        }
+        private static bool HandleHeal(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 2)
+            {
+                response = "Usage: reg heal (value)";
                 return false;
             }
 
-            switch (arguments.At(0))
+            if (!float.TryParse(arguments.At(1), out float heal) || heal <= 0f)
             {
-                case "clear":
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: reg clear";
-                        return false;
-                    }
-
-                    foreach (Player ply in Plugin.RgnHubs.Keys)
-                        if (ply.ReferenceHub.TryGetComponent(out RegenerationComponent rgCom))
-                            Object.Destroy(rgCom);
-
-                    response = "Regeneration has been removed from everyone";
-                    return true;
-                case "list":
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: regen list";
-                        return false;
-                    }
-
-                    StringBuilder playerLister = StringBuilderPool.Shared.Rent(Plugin.RgnHubs.Count != 0 ? "Players with regeneration on:\n" : "No players currently online have regeneration on");
-                    if (Plugin.RgnHubs.Count == 0)
-                    {
-                        response = playerLister.ToString();
-                        return true;
-                    }
-
-                    foreach (Player ply in Plugin.RgnHubs.Keys)
-                    {
-                        playerLister.Append(ply.Nickname);
-                        playerLister.Append(", ");
-                    }
-
-                    string msg = playerLister.ToString().Substring(0, playerLister.ToString().Length - 2);
-                    StringBuilderPool.Shared.Return(playerLister);
-                    response = msg;
-                    return true;
-                case "heal":
-                    if (arguments.Count < 2)
-                    {
-                        response = "Usage: reg heal (value)";
-                        return false;
-                    }
-
-                    if (!float.TryParse(arguments.At(1), out float healvalue) || healvalue < 0.05)
-                    {
-                        response = $"Invalid value for healing: {arguments.At(1)}";
-                        return false;
-                    }
-
-                    Plugin.HealthGain = healvalue;
-                    response = $"Players with regeneration will heal {healvalue} HP per interval";
-                    return true;
-                case "time":
-                    if (arguments.Count < 2)
-                    {
-                        response = "Usage: reg time (value)";
-                        return false;
-                    }
-
-                    if (!float.TryParse(arguments.At(1), out float healtime) || healtime < 0.05)
-                    {
-                        response = $"Invalid value for healing time interval: {arguments.At(1)}";
-                        return false;
-                    }
-
-                    Plugin.HealthInterval = healtime;
-                    response = $"Players with regeneration will heal every {healtime} seconds";
-                    return true;
-                case "*":
-                case "all":
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: reg (all / *)";
-                        return false;
-                    }
-
-                    foreach (Player ply in Player.GetPlayers().Where(ply => !ply.ReferenceHub.TryGetComponent(out RegenerationComponent _)))
-                        ply.ReferenceHub.gameObject.AddComponent<RegenerationComponent>();
-
-                    response = "Everyone on the server can regenerate health now";
-                    return true;
-                default:
-                    if (arguments.Count < 1)
-                    {
-                        response = "Usage: reg (player id / name)";
-                        return false;
-                    }
-
-                    Player pl = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-
-                    if (pl == null)
-                    {
-                        response = $"Player not found: {arguments.At(0)}";
-                        return false;
-                    }
-
-                    if (!pl.ReferenceHub.TryGetComponent(out RegenerationComponent rgnComponent))
-                    {
-                        pl.GameObject.AddComponent<RegenerationComponent>();
-                        response = $"Regeneration is on for {pl.Nickname}";
-                    }
-                    else
-                    {
-                        Object.Destroy(rgnComponent);
-                        response = $"Regeneration is off for {pl.Nickname}";
-                    }
-                    return true;
+                response = $"Invalid value for healing: {arguments.At(1)}";
+                return false;
             }
+
+            AtPlayer.RegenerationAmount = heal;
+            response = $"Players with regeneration will heal {heal} HP per interval";
+            return true;
+        }
+        private static bool HandleTime(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 2)
+            {
+                response = "Usage: reg time (value)";
+                return false;
+            }
+
+            if (!float.TryParse(arguments.At(1), out float interval) || interval <= 0f)
+            {
+                response = $"Invalid value for healing time interval: {arguments.At(1)}";
+                return false;
+            }
+
+            AtPlayer.RegenerationInterval = interval;
+            response = $"Players with regeneration will heal every {interval} seconds";
+            return true;
+        }
+        private static bool HandleDefault(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 1)
+            {
+                response = "Usage: reg (player id / name)";
+                return false;
+            }
+
+            AtPlayer pl = Extensions.GetPlayer(arguments.At(0));
+
+            if (pl == null)
+            {
+                response = $"Player not found: {arguments.At(0)}";
+                return false;
+            }
+
+            pl.RegenerationEnabled = !pl.RegenerationEnabled;
+            response = pl.RegenerationEnabled ? $"Regeneration is on for {pl.Nickname}" : $"Regeneration is off for {pl.Nickname}";
+            return true;
+        }
+        private static bool HandleAll(ArraySegment<string> arguments, out string response)
+        {
+            if (arguments.Count < 1)
+            {
+                response = "Usage: reg (all / *)";
+                return false;
+            }
+
+            foreach (AtPlayer p in Extensions.Players)
+                p.RegenerationEnabled = true;
+
+            response = "Everyone on the server can regenerate health now";
+            return true;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace AdminTools.Commands.Tags
             }
 
             foreach (Player player in Player.GetPlayers().Where(player => player.ReferenceHub.serverRoles.RemoteAdmin && !player.ReferenceHub.serverRoles.RaEverywhere && player.IsBadgeHidden()))
-                player.SetBadgeHidden(false);
+                player.SetBadgeVisibility(false);
 
             response = "All staff tags are now visible";
             return true;
