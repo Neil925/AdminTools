@@ -34,11 +34,10 @@ namespace AdminTools.Commands.InstantKill
             if (arguments.Count >= 1)
                 return arguments.At(0).ToLower() switch
                 {
-                    "clear" => HandleClear(arguments, out response),
-                    "list" => HandleList(out response),
-                    "remove" => HandleRemove(arguments, out response),
-                    "*" => HandleAll(arguments, out response),
-                    "all" => HandleAll(arguments, out response),
+                    "clear" => Clear(arguments, out response),
+                    "list" => List(out response),
+                    "remove" => Remove(arguments, out response),
+                    "*" or "all" => All(arguments, out response),
                     _ => HandleDefault(arguments, out response)
                 };
             response = "Usage:\ninstakill ((player id / name) or (all / *))" +
@@ -67,7 +66,7 @@ namespace AdminTools.Commands.InstantKill
             response = $"Instant killing is now {(p.InstantKillEnabled ? "on" : "off")} for {p.Nickname}";
             return true;
         }
-        private static bool HandleAll(ArraySegment<string> arguments, out string response)
+        private static bool All(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 1)
             {
@@ -81,7 +80,7 @@ namespace AdminTools.Commands.InstantKill
             response = "Everyone on the server can instantly kill other users now";
             return true;
         }
-        private static bool HandleRemove(ArraySegment<string> arguments, out string response)
+        private static bool Remove(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 2)
             {
@@ -105,7 +104,7 @@ namespace AdminTools.Commands.InstantKill
                 response = $"Player {p.Nickname} does not have the ability to instantly kill others";
             return true;
         }
-        private static bool HandleList(out string response)
+        private static bool List(out string response)
         {
             AtPlayer[] list = Extensions.Players.Where(p => p.InstantKillEnabled).ToArray();
             StringBuilder playerLister = StringBuilderPool.Shared.Rent(list.Length != 0 ? "Players with instant killing on:\n" : "No players currently online have instant killing on");
@@ -119,7 +118,7 @@ namespace AdminTools.Commands.InstantKill
             response = StringBuilderPool.Shared.ToStringReturn(playerLister);
             return true;
         }
-        private static bool HandleClear(ArraySegment<string> arguments, out string response)
+        private static bool Clear(ArraySegment<string> arguments, out string response)
         {
             if (arguments.Count < 1)
             {

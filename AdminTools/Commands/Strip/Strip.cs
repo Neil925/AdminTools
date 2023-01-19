@@ -14,7 +14,10 @@ namespace AdminTools.Commands.Strip
 
         public override string Command => "atstrip";
 
-        public override string[] Aliases { get; } = { "stp" };
+        public override string[] Aliases { get; } =
+        {
+            "stp"
+        };
 
         public override string Description => "Clears a user or users inventories instantly";
 
@@ -34,26 +37,26 @@ namespace AdminTools.Commands.Strip
                 return false;
             }
 
-            switch (arguments.At(0))
+            switch (arguments.At(0).ToLower())
             {
-                case "*":
-                case "all":
-                    foreach (Player ply in Player.GetPlayers())
-                        ply.ClearInventory();
-
+                case "*" or "all":
+                    foreach (Player p in Player.GetPlayers())
+                        p.ClearInventory();
                     response = "Everyone's inventories have been cleared now";
                     return true;
                 default:
-                    Player pl = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (pl == null)
+                {
+                    Player p = Extensions.GetPlayer(arguments.At(0));
+                    if (p == null)
                     {
                         response = $"Player not found: {arguments.At(0)}";
                         return false;
                     }
 
-                    pl.ClearInventory();
-                    response = $"Player {pl.Nickname}'s inventory have been cleared now";
+                    p.ClearInventory();
+                    response = $"Player {p.Nickname}'s inventory have been cleared now";
                     return true;
+                }
             }
         }
     }

@@ -1,5 +1,4 @@
 ﻿using CommandSystem;
-using PlayerRoles;
 using PluginAPI.Core;
 using System;
 using System.Collections.Generic;
@@ -38,27 +37,26 @@ namespace AdminTools.Commands.Ball
             }
 
             List<Player> players = new();
-            switch (arguments.At(0))
+            switch (arguments.At(0).ToLower())
             {
-                case "*":
-                case "all":
-                    players.AddRange(Player.GetPlayers().Where(pl => pl.Role is not (RoleTypeId.Spectator or RoleTypeId.None)));
+                case "*" or "all":
+                    players.AddRange(Player.GetPlayers().Where(Extensions.IsAlive));
                     break;
                 default:
-                    Player ply = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (ply == null)
+                    Player p = Extensions.GetPlayer(arguments.At(0));
+                    if (p == null)
                     {
                         response = $"Player not found: {arguments.At(0)}";
                         return false;
                     }
 
-                    if (ply.Role is RoleTypeId.Spectator or RoleTypeId.None)
+                    if (!p.IsAlive())
                     {
                         response = "You cannot spawn a ball on that player right now";
                         return false;
                     }
 
-                    players.Add(ply);
+                    players.Add(p);
                     break;
             }
 

@@ -83,6 +83,9 @@
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>..\..\assemblies\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+          <HintPath>..\..\assemblies\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
         <Reference Include="YamlDotNet">
             <HintPath>..\..\..\..\Assemblies\Beta\YamlDotNet.dll</HintPath>
         </Reference>
@@ -133,7 +136,7 @@
         <Compile Include="Commands\Tags\Tags.cs" />
         <Compile Include="Commands\TeleportX\TeleportX.cs" />
         <Compile Include="Commands\Unmute\All.cs" />
-        <Compile Include="Commands\Unmute\ICom.cs" />
+        <Compile Include="Commands\Unmute\IntercomUnmute.cs" />
         <Compile Include="Commands\Unmute\RoundStart.cs" />
         <Compile Include="Commands\Unmute\Unmute.cs" />
         <Compile Include="Config.cs" />

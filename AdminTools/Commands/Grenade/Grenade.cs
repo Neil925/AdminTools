@@ -15,37 +15,19 @@ namespace AdminTools.Commands.Grenade
 
         public override string Command => "grenade";
 
-        public override string[] Aliases { get; } = { "gn" };
+        public override string[] Aliases { get; } =
+        {
+            "gn"
+        };
 
-        public override string Description => "Spawns a frag/flash/scp018 grenade on a user or users";
+        public override string Description => "Spawns a HE grenade/flashbang/SCP-018 on a user or users";
 
         public override void LoadGeneratedCommands() { }
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.GivingItems))
-            {
-                response = "You do not have permission to use this command";
+            if (!ValidateArguments(arguments, sender, out response, out ItemType type, out float fuseTime))
                 return false;
-            }
-
-            if (arguments.Count is < 2 or > 3)
-            {
-                response = "Usage: grenade ((player id / name) or (all / *)) (GrenadeType) (grenade time)";
-                return false;
-            }
-
-            if (!Enum.TryParse(arguments.At(1), true, out ItemType type) || type != ItemType.SCP018 && type != ItemType.GrenadeHE && type != ItemType.GrenadeFlash)
-            {
-                response = $"Invalid value for grenade type: {arguments.At(1)}";
-                return false;
-            }
-
-            if (!float.TryParse(arguments.At(2), out float fuseTime))
-            {
-                response = $"Invalid fuse time for grenade: {arguments.At(2)}";
-                return false;
-            }
 
             switch (arguments.At(0))
             {
@@ -54,23 +36,54 @@ namespace AdminTools.Commands.Grenade
                     if (type == ItemType.SCP018)
                         Cassie.Message("pitch_1.5 xmas_bouncyballs", true, false);
 
-                    foreach (Player player in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
-                        Handlers.CreateThrowable(type).SpawnActive(player.Position, fuseTime);
+                    foreach (Player p in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
+                        Handlers.CreateThrowable(type).SpawnActive(p.Position, fuseTime);
 
-                    break;
+                    response = "Grenade has been sent to everyone";
+                    return true;
                 default:
-                    Player ply = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (ply is null)
+                {
+                    Player p = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
+                    if (p is null)
                     {
                         response = $"Player {arguments.At(0)} not found.";
                         return false;
                     }
 
-                    Handlers.CreateThrowable(type).SpawnActive(ply.Position, fuseTime);
-                    break;
+                    Handlers.CreateThrowable(type).SpawnActive(p.Position, fuseTime);
+                    response = $"Grenade has been sent to {p.Nickname}";
+                    return true;
+                }
+            }
+        }
+        private static bool ValidateArguments(ArraySegment<string> arguments, ICommandSender sender, out string response, out ItemType type, out float fuseTime)
+        {
+            type = ItemType.None;
+            fuseTime = -1f;
+            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.GivingItems))
+            {
+                response = "You do not have permission to use this command";
+                return false;
             }
 
-            response = $"Grenade has been sent to {arguments.At(0)}";
+            if (arguments.Count < 2)
+            {
+                response = "Usage: grenade ((player id / name) or (all / *)) (GrenadeType) [fuse time]";
+                return false;
+            }
+
+            if (!Enum.TryParse(arguments.At(1), true, out type) || type is not (ItemType.SCP018 or ItemType.GrenadeHE or ItemType.GrenadeFlash))
+            {
+                response = $"Invalid value for grenade type: {arguments.At(1)}, expected SCP018 or GrenadeHE or GrenadeFlash";
+                return false;
+            }
+
+            if (arguments.Count > 2 && !float.TryParse(arguments.At(2), out fuseTime))
+            {
+                response = $"Invalid fuse time for grenade: {arguments.At(2)}! Set to negative to use default fuse time";
+                return false;
+            }
+            response = "";
             return true;
         }
     }

@@ -34,20 +34,20 @@ namespace AdminTools.Commands.Jail
                 return false;
             }
 
-            Player ply = int.TryParse(arguments.At(0), out int id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
+            Player p = Extensions.GetPlayer(arguments.At(0));
 
-            if (ply == null)
+            if (p == null)
             {
                 response = $"Player not found: {arguments.At(0)}";
                 return false;
             }
 
-            if (Plugin.JailedPlayers.Any(j => j.UserId == ply.UserId))
+            if (Plugin.JailedPlayers.Any(j => j.UserId == p.UserId))
             {
                 try
                 {
-                    Timing.RunCoroutine(EventHandlers.DoUnJail(ply));
-                    response = $"Player {ply.Nickname} has been unjailed now";
+                    Timing.RunCoroutine(EventHandlers.DoUnJail(p));
+                    response = $"Player {p.Nickname} has been unjailed now";
                 }
                 catch (Exception e)
                 {
@@ -58,8 +58,8 @@ namespace AdminTools.Commands.Jail
             }
             else
             {
-                Timing.RunCoroutine(EventHandlers.DoJail(ply));
-                response = $"Player {ply.Nickname} has been jailed now";
+                Timing.RunCoroutine(EventHandlers.DoJail(p));
+                response = $"Player {p.Nickname} has been jailed now";
             }
             return true;
         }

@@ -5,7 +5,6 @@ using MEC;
 using Mirror;
 using NorthwoodLib.Pools;
 using PlayerRoles;
-using PlayerRoles.Ragdolls;
 using PlayerStatsSystem;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
@@ -56,9 +55,10 @@ namespace AdminTools
             ccm.GodMode = true;
             obj.GetComponent<NicknameSync>().Network_myNickSync = "Dummy";
             obj.GetComponent<QueryProcessor>()._hub.Network_playerId = new RecyclablePlayerId(9999);
-            obj.transform.localScale = new Vector3(x, y, z);
-            obj.transform.position = position;
-            obj.transform.rotation = rotation;
+            Transform t = obj.transform;
+            t.localScale = new Vector3(x, y, z);
+            t.position = position;
+            t.rotation = rotation;
             NetworkServer.Spawn(obj);
             List<GameObject> objs = Plugin.DumHubs.GetOrAdd(ply, GameObjectListFactory);
             objs.Add(obj);
@@ -68,25 +68,22 @@ namespace AdminTools
         }
         private static List<GameObject> GameObjectListFactory() => new();
 
-        public static IEnumerator<float> SpawnBodies(Player player, RoleTypeId role, int count)
+        public static IEnumerator<float> SpawnBodies(Player player, IRagdollRole ragdollRole, int count)
         {
-            if (!PlayerRoleLoader.AllRoles.TryGetValue(role, out PlayerRoleBase roleBase) || roleBase is not IRagdollRole currentRole)
+            PlayerRoleBase role = ragdollRole as PlayerRoleBase;
+            if (role == null)
                 yield break;
             for (int i = 0; i < count; i++)
             {
 
-                GameObject gameObject = Object.Instantiate(currentRole.Ragdoll.gameObject, player.Position, player.Camera.rotation);
+                Transform t = player.GameObject.transform;
+                GameObject gameObject = Object.Instantiate(ragdollRole.Ragdoll.gameObject, t.position, t.rotation);
                 if (gameObject.TryGetComponent(out BasicRagdoll component))
                 {
-                    Transform transform = currentRole.Ragdoll.transform;
-                    UniversalDamageHandler handler = new(0.0f, DeathTranslations.Unknown);
-                    component.NetworkInfo = new RagdollData(ReferenceHub._hostHub, handler, transform.localPosition, transform.localRotation);
+                    component.NetworkInfo = new RagdollData(null, new UniversalDamageHandler(0.0f, DeathTranslations.Unknown), role.RoleTypeId, t.position, t.rotation, "SCP-343", NetworkTime.time);
                 }
 
                 NetworkServer.Spawn(gameObject);
-
-                RagdollManager.ServerSpawnRagdoll(ReferenceHub._hostHub,
-                    new UniversalDamageHandler(0.0f, DeathTranslations.Unknown));
                 yield return Timing.WaitForOneFrame;
             }
         }
@@ -115,15 +112,16 @@ namespace AdminTools
                 };
                 bench.gameObject.transform.localScale = size;
                 NetworkServer.Spawn(bench);
-                List<GameObject> objs = Plugin.BchHubs.GetOrAdd(ply, GameObjectListFactory);
+                List<GameObject> objs = Plugin.BenchHubs.GetOrAdd(ply, GameObjectListFactory);
                 objs.Add(bench);
-                benchIndex = Plugin.BchHubs[ply].Count;
+                benchIndex = Plugin.BenchHubs[ply].Count;
 
                 if (benchIndex != 1)
                     benchIndex = objs.Count;
                 bench.transform.localPosition = offset.position;
                 bench.transform.localRotation = Quaternion.Euler(offset.rotation);
-                bench.AddComponent<WorkstationController>();
+                if (!bench.TryGetComponent(out WorkstationController _))
+                    bench.AddComponent<WorkstationController>();
             }
             catch (Exception e)
             {
@@ -205,10 +203,8 @@ namespace AdminTools
 
             if (player.IsOverwatchEnabled)
                 player.IsOverwatchEnabled = false;
-            yield return Timing.WaitForSeconds(1f);
-
+            yield return Timing.WaitForSeconds(0.2f);
             player.SetRole(RoleTypeId.Tutorial);
-            player.Position = new Vector3(38f, 1020f, -32f);
         }
 
         public static IEnumerator<float> DoUnJail(Player player)
@@ -272,7 +268,7 @@ namespace AdminTools
 
         [PluginEvent(ServerEventType.RoundStart)]
         public void OnRoundStart() => ClearRoundStartMutes();
-        
+
         public static void ClearRoundStartMutes()
         {
             foreach (Player p in Plugin.RoundStartMutes.Select(Player.Get))
@@ -327,6 +323,15 @@ namespace AdminTools
         {
             if (player.BreakDoorsEnabled)
                 door.BreakDoor();
+        }
+
+        [PluginEvent(ServerEventType.PlayerDamage)]
+        public void OnPlayerDamage(Player target, AtPlayer attacker, DamageHandlerBase handler)
+        {
+            if (attacker is { InstantKillEnabled: true })
+            {
+                handler.SetAmount(-1);
+            }
         }
     }
 }

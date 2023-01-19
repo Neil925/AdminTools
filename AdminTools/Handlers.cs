@@ -8,7 +8,6 @@ using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.Attachments;
 using InventorySystem.Items.Pickups;
 using InventorySystem.Items.ThrowableProjectiles;
-using MEC;
 using Mirror;
 using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp939;
@@ -23,6 +22,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace AdminTools
 {
@@ -244,7 +244,7 @@ namespace AdminTools
                     return;
                 case Scp939DamageHandler scp939DamageHandler:
                     scp939DamageHandler.Damage = amount;
-                    return;
+                    break;
             }
         }
 
@@ -310,7 +310,7 @@ namespace AdminTools
 
         public static Scp914KnobSetting GetKnobSetting() => Scp914Controller.Singleton.Network_knobSetting;
 
-        public static Scp914KnobSetting SetNobSetting(Scp914KnobSetting state) =>
+        public static Scp914KnobSetting SetKnobSetting(Scp914KnobSetting state) =>
             Scp914Controller.Singleton.Network_knobSetting = state;
 
         public static PlayerCommandSender GetSender(this Player player) =>
@@ -318,15 +318,18 @@ namespace AdminTools
 
         public static double GetServerTps() => Math.Round(1f / Time.smoothDeltaTime);
 
-        public static bool TryPryOpen(this DoorVariant door, Player player) => door is PryableDoor pryable && pryable.TryPryGate(player.ReferenceHub);
+        public static bool TryPryOpen(this DoorVariant door, Player player) => door is PryableDoor gate && gate.TryPryGate(player.ReferenceHub);
 
         public static void SpawnActive(this ThrowableItem item, Vector3 position, float fuseTime = -1f,
             Player owner = null)
         {
-            ExplosionGrenade grenade = (ExplosionGrenade)Object.Instantiate(item.Projectile, position, Quaternion.identity);
-            if (fuseTime < 0)
-                grenade._fuseTime = ((ExplosionGrenade)item.Projectile)._fuseTime;
-            grenade.PreviousOwner = new Footprint(owner is not null ? owner.ReferenceHub : ReferenceHub._hostHub);
+            TimeGrenade grenade = (TimeGrenade)Object.Instantiate(item.Projectile, position, Quaternion.identity);
+            if (fuseTime >= 0)
+                grenade._fuseTime = fuseTime;
+            grenade.NetworkInfo = new PickupSyncInfo(item.ItemTypeId, position, Quaternion.identity, item.Weight, item.ItemSerial);
+            grenade.PreviousOwner = new Footprint(owner != null ? owner.ReferenceHub : ReferenceHub.HostHub);
+            if (grenade is Scp018Projectile scp018)
+                scp018.RigidBody.velocity = new Vector3(Random.value, Random.value, Random.value); // add some force to make the ball bounce
             NetworkServer.Spawn(grenade.gameObject);
             grenade.ServerActivate();
         }
@@ -375,16 +378,26 @@ namespace AdminTools
             }
         }
 
-        public static void ClearInventory(this Player player, bool destroy = true)
+        public static void ClearInventory(this Player player)
         {
-            foreach (ItemBase item in player.ReferenceHub.inventory.UserInventory.Items.Values.ToList())
-                player.RemoveItem(item, destroy);
+            Inventory inv = player.ReferenceHub.inventory;
+            InventoryInfo ui = inv.UserInventory;
+            ItemType[] ammoTypes = ui.ReserveAmmo.Keys.ToArray();
+            foreach (ItemType type in ammoTypes)
+            {
+                ui.ReserveAmmo[type] = 0;
+            }
+            ui.Items.Clear();
+            inv.NetworkCurItem = ItemIdentifier.None;
+            inv.SendItemsNextFrame = true;
+            inv.SendAmmoNextFrame = true;
         }
 
         public static ItemBase AddItem(this Player player, ItemType itemType)
         {
             ItemBase item = player.ReferenceHub.inventory.ServerAddItem(itemType);
-            if (item is not Firearm firearm) return item;
+            if (item is not Firearm firearm)
+                return item;
 
             if (AttachmentsServerHandler.PlayerPreferences[player.ReferenceHub].TryGetValue(itemType, out uint attachments))
             {
@@ -395,23 +408,24 @@ namespace AdminTools
             if (firearm.Attachments.Any(a => a.Name == AttachmentName.Flashlight))
                 flags |= FirearmStatusFlags.FlashlightEnabled;
             firearm.Status = new FirearmStatus(firearm.AmmoManagerModule.MaxAmmo, flags, firearm.GetCurrentAttachmentsCode());
-
             return item;
         }
 
         public static void ResetInventory(this Player player, List<ItemType> items)
         {
             player.ClearInventory();
-
-            if (items.IsEmpty()) return;
-
-            Timing.CallDelayed(.5f, () =>
-            { foreach (ItemType item in items) player.AddItem(item); });
+            if (items.Count == 0)
+                return;
+            foreach (ItemType type in items)
+            {
+                player.AddItem(type);
+            }
         }
 
         public static bool BreakDoor(this DoorVariant door, DoorDamageType type = DoorDamageType.ServerCommand)
         {
-            if (door is not IDamageableDoor { IsDestroyed: false } dmg) return false;
+            if (door is not IDamageableDoor { IsDestroyed: false } dmg)
+                return false;
 
             dmg.ServerDamage(ushort.MaxValue, type);
             return true;

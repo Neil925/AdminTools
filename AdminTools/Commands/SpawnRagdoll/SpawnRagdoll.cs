@@ -16,7 +16,10 @@ namespace AdminTools.Commands.SpawnRagdoll
 
         public override string Command => "spawnragdoll";
 
-        public override string[] Aliases { get; } = { "ragdoll", "rd", "rag", "doll" };
+        public override string[] Aliases { get; } =
+        {
+            "ragdoll", "rd", "rag", "doll"
+        };
 
         public override string Description => "Spawns a specified number of ragdolls on a user";
 
@@ -24,37 +27,15 @@ namespace AdminTools.Commands.SpawnRagdoll
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.RespawnEvents))
-            {
-                response = "You do not have permission to use this command";
+            if (!ValidateArguments(arguments, sender, out response, out RoleTypeId type, out int amount, out IRagdollRole ragdollRole))
                 return false;
-            }
 
-            if (arguments.Count < 3)
+            switch (arguments.At(0).ToLower())
             {
-                response = "Usage: spawnragdoll ((player id / name) or (all / *)) (RoleTypeId) (amount)";
-                return false;
-            }
-
-            if (!Enum.TryParse(arguments.At(1), true, out RoleTypeId type))
-            {
-                response = $"Invalid RoleTypeId for ragdoll: {arguments.At(1)}";
-                return false;
-            }
-
-            if (!int.TryParse(arguments.At(2), out int amount))
-            {
-                response = $"Invalid amount of ragdolls to spawn: {arguments.At(2)}";
-                return false;
-            }
-
-            switch (arguments.At(0))
-            {
-                case "*":
-                case "all":
-                    foreach (Player player in Player.GetPlayers().Where(player => player.Role != RoleTypeId.Spectator))
+                case "*" or "all":
+                    foreach (Player player in Player.GetPlayers().Where(Extensions.IsAlive))
                     {
-                        Timing.RunCoroutine(EventHandlers.SpawnBodies(player, type, amount));
+                        Timing.RunCoroutine(EventHandlers.SpawnBodies(player, ragdollRole, amount));
                     }
 
                     break;
@@ -66,12 +47,51 @@ namespace AdminTools.Commands.SpawnRagdoll
                         return false;
                     }
 
-                    Timing.RunCoroutine(EventHandlers.SpawnBodies(ply, type, amount));
-
+                    Timing.RunCoroutine(EventHandlers.SpawnBodies(ply, ragdollRole, amount));
                     break;
             }
 
             response = $"{amount} {type} ragdoll(s) have been spawned on {arguments.At(0)}.";
+            return true;
+        }
+        private static bool ValidateArguments(ArraySegment<string> arguments, ICommandSender sender, out string response, out RoleTypeId type, out int amount, out IRagdollRole ragdollRole)
+        {
+            type = RoleTypeId.None;
+            amount = 0;
+            ragdollRole = null;
+            if (!((CommandSender)sender).CheckPermission(PlayerPermissions.RespawnEvents))
+            {
+                response = "You do not have permission to use this command";
+                return false;
+            }
+
+            if (arguments.Count < 3)
+            {
+                response = "Usage: spawnragdoll ((player id / name) or (all / *)) (RoleTypeId) [amount]";
+                return false;
+            }
+
+            if (!Enum.TryParse(arguments.At(1), true, out type))
+            {
+                response = $"Invalid RoleTypeId for ragdoll: {arguments.At(1)}";
+                return false;
+            }
+
+            if (!PlayerRoleLoader.TryGetRoleTemplate(type, out PlayerRoleBase role) || role is not IRagdollRole ragdoll)
+            {
+                response = $"Cannot find ragdoll role for role type {type}";
+                return false;
+            }
+
+
+            amount = 0;
+            if (arguments.Count > 2 && !int.TryParse(arguments.At(2), out amount))
+            {
+                response = $"Invalid amount of ragdolls to spawn: {arguments.At(2)}";
+                return false;
+            }
+            response = "";
+            ragdollRole = ragdoll;
             return true;
         }
     }

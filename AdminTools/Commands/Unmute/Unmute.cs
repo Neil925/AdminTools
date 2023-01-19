@@ -18,7 +18,7 @@ namespace AdminTools.Commands.Unmute
         public override void LoadGeneratedCommands()
         {
             RegisterCommand(new All());
-            RegisterCommand(new Com());
+            RegisterCommand(new IntercomUnmute());
             RegisterCommand(new RoundStart());
         }
 

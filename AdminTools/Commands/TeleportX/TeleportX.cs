@@ -1,5 +1,4 @@
 ﻿using CommandSystem;
-using PlayerRoles;
 using PluginAPI.Core;
 using System;
 using System.Linq;
@@ -14,7 +13,10 @@ namespace AdminTools.Commands.TeleportX
 
         public override string Command => "teleportx";
 
-        public override string[] Aliases { get; } = { "tpx" };
+        public override string[] Aliases { get; } =
+        {
+            "tpx"
+        };
 
         public override string Description => "Teleports all users or a user to another user";
 
@@ -28,50 +30,51 @@ namespace AdminTools.Commands.TeleportX
                 return false;
             }
 
-            if (arguments.Count < 2)
+            if (arguments.Count >= 2)
+                return arguments.At(0) switch
+                {
+                    "*" or "all" => All(arguments, out response),
+                    _ => HandleDefault(arguments, out response)
+                };
+            response = "Usage: teleportx (People teleported: (player id / name) or (all / *)) (Teleported to: (player id / name) or (all / *))";
+            return false;
+
+        }
+        private static bool HandleDefault(ArraySegment<string> arguments, out string response)
+        {
+            Player toTarget = Extensions.GetPlayer(arguments.At(0));
+            if (toTarget == null)
             {
-                response = "Usage: teleportx (People teleported: (player id / name) or (all / *)) (Teleported to: (player id / name) or (all / *))";
+                response = $"Player not found: {arguments.At(0)}";
                 return false;
             }
 
-            int id;
-
-            switch (arguments.At(0))
+            Player playerToTeleport = Extensions.GetPlayer(arguments.At(1));
+            if (playerToTeleport == null)
             {
-                case "*":
-                case "all":
-                    Player ply = int.TryParse(arguments.At(1), out id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(1));
-                    if (ply == null)
-                    {
-                        response = $"Player not found: {arguments.At(1)}";
-                        return false;
-                    }
-
-
-                    foreach (Player plyr in Player.GetPlayers().Where(plyr => plyr.Role != RoleTypeId.Spectator && ply.Role != RoleTypeId.None))
-                        plyr.Position = ply.Position;
-
-                    response = $"Everyone has been teleported to Player {ply.Nickname}";
-                    return true;
-                default:
-                    Player pl = int.TryParse(arguments.At(0), out id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(0));
-                    if (pl == null)
-                    {
-                        response = $"Player not found: {arguments.At(0)}";
-                        return false;
-                    }
-
-                    Player plr = int.TryParse(arguments.At(1), out id) ? Player.GetPlayers().FirstOrDefault(x => x.PlayerId == id) : Player.GetByName(arguments.At(1));
-                    if (plr == null)
-                    {
-                        response = $"Player not found: {arguments.At(1)}";
-                        return false;
-                    }
-
-                    pl.Position = plr.Position;
-                    response = $"Player {pl.Nickname} has been teleported to Player {plr.Nickname}";
-                    return true;
+                response = $"Player not found: {arguments.At(1)}";
+                return false;
             }
+
+            toTarget.Position = playerToTeleport.Position;
+            response = $"Player {toTarget.Nickname} has been teleported to Player {playerToTeleport.Nickname}";
+            return true;
+        }
+        private static bool All(ArraySegment<string> arguments, out string response)
+        {
+            Player target = Extensions.GetPlayer(arguments.At(1));
+            if (target == null)
+            {
+                response = $"Player not found: {arguments.At(1)}";
+                return false;
+            }
+
+
+            foreach (Player p in Player.GetPlayers().Where(Extensions.IsAlive))
+                p.Position = target.Position;
+
+            response = $"Everyone has been teleported to Player {target.Nickname}";
+            return true;
         }
     }
 }

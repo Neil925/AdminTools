@@ -4,7 +4,7 @@ using System;
 
 namespace AdminTools.Commands.Unmute
 {
-    public sealed class Com : ICommand
+    public sealed class IntercomUnmute : ICommand
     {
         public string Command => "icom";
 
